@@ -1,0 +1,41 @@
+function CommonFunctions()
+  local self = {}
+
+  function self.switch(t)
+    t.case = function (self,x)
+      local f=self[x] or self.default
+      if f then
+        if type(f)=="function" then
+          f(x,self)
+        else
+          error("Case "..tostring(x).." is not a function")
+        end
+      end
+    end
+    return t
+  end
+
+  function self.try(f, catch_f)
+    local status, exception = pcall(f)
+    if not status then
+      catch_f(exception)
+    end
+  end
+
+  function self.limitToWrite(limit)
+    local timer = os.startTimer(limit)
+
+    while true do
+      local event, result = os.pullEvent()
+      if event=="timer" and timer==result then
+        return 0
+      else
+        if event=="key" then
+          return io.read()
+        end
+      end
+    end
+  end
+
+  return self
+end
