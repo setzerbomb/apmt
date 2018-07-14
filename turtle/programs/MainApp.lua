@@ -2,7 +2,7 @@ function MainApp(root)
 
   dofile(root .. "/objects/CommonFunctions.lua")
   dofile(root .. "/objects/MiningT.lua")
-  
+
   dofile(root .. "/programs/Configuration.lua")
   dofile(root .. "/programs/Maintenance.lua")
   dofile(root .. "/programs/GoToPosition.lua")
@@ -10,7 +10,7 @@ function MainApp(root)
   dofile(root .. "/programs/Tunnel.lua")
   dofile(root .. "/programs/Quarry.lua")
   dofile(root .. "/programs/DiamondQuarry.lua")
-  
+
   dofile(root .. "/GUI/GUIMessages.lua")
   dofile(root .. "/GUI/GUIMain.lua")
 
@@ -21,7 +21,7 @@ function MainApp(root)
   local commonF = miningT.getCommonF()
   local guiMessages = GUIMessages()
   local guiMain = GUIMain(commonF,guiMessages)
-  local continue,showMainMenu,showApps = true,true,true  
+  local continue,showMainMenu,showApps = true,true,true
 
   local mainCase = commonF.switch{
     [1] = function(x)
@@ -50,7 +50,7 @@ function MainApp(root)
       continue,showMainMenu = maintenance.start()
     end,
     [4] = function(x)
-      local gtp = GoToPosition(miningT)
+      local gtp = GoToPosition(miningT,guiMessages)
       x,y,z = guiMain.goToXYZ()
       if x~=0 and y~=0 and z~=0 then
         miningT.down()
@@ -103,7 +103,7 @@ function MainApp(root)
   function self.main()
     local r = 0;
     guiMessages.showInfoMsg("Type something to access the main menu if there is some execution running")
-    r = commonF.limitToWrite(3)
+    r = commonF.limitToWrite(2.5)
     if r == 0 then
       while continue do
         turtle.select(1)

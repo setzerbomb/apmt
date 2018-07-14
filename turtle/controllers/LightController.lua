@@ -1,17 +1,17 @@
 function LightController(miningT)
 
   local self = {}
-  
+
   local objects = (miningT.getData()).getObjects()
 
   local function placeTorch(slot,where)
     miningT.select(slot)
-      if where == "left" then
-        miningT.left()
-        miningT.placeForward()
-        miningT.right()
-      else
-        if where == "right" then
+    if where == "left" then
+      miningT.left()
+      miningT.placeForward()
+      miningT.right()
+    else
+      if where == "right" then
         miningT.right()
         miningT.placeForward()
         miningT.left()

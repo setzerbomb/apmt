@@ -24,7 +24,7 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
     else
       while specificLocalData.y<=0 or specificLocalData.x<=0 do
         guiMessages.showHeader("Diamond Quarry")
-		    print("Tell me the quarry dimension x:y")
+        print("Tell me the quarry dimension x:y")
         print("X:")
         specificLocalData.x = tonumber(commonF.limitToWrite(15))
         print("Y:")
@@ -66,33 +66,33 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
 
   local actionsCase = commonF.switch{
     [0] = function(x)
-        while specificData.stepX <= specificData.x-1 and not objects.execution.getTerminate() do
-          miningT.forward()
-          miningT.digUp()
-          miningT.digDown()
-          addStepX()
-          miningT.enlighten("down",27)
-        end
-        specificData.stepX = 0
-        end,
+      while specificData.stepX <= specificData.x-1 and not objects.execution.getTerminate() do
+        miningT.forward()
+        miningT.digUp()
+        miningT.digDown()
+        addStepX()
+        miningT.enlighten("down",27)
+      end
+      specificData.stepX = 0
+    end,
     [1] = function(x)
-        if specificData.turn then
-          miningT.left()
-          miningT.forward()
-          miningT.digUp()
-          miningT.digDown()
-          miningT.left()
-          specificData.turn = false
-        else
-          miningT.right()
-          miningT.forward()
-          miningT.digUp()
-          miningT.digDown()
-          miningT.right()
-          specificData.turn = true
-        end
-        addStepY()
-        end,
+      if specificData.turn then
+        miningT.left()
+        miningT.forward()
+        miningT.digUp()
+        miningT.digDown()
+        miningT.left()
+        specificData.turn = false
+      else
+        miningT.right()
+        miningT.forward()
+        miningT.digUp()
+        miningT.digDown()
+        miningT.right()
+        specificData.turn = true
+      end
+      addStepY()
+    end,
     default = function (x) return 0 end
   }
 
@@ -135,8 +135,8 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
           miningT.down()
         end
       end
+      miningT.verifyFuelLevelToGoBackHome()
       patternAction()
-      miningT.verifyFuelLevel()
     end
     wasTerminated(objects.execution.getTerminate())
   end

@@ -2,8 +2,8 @@ function FuelController(fuels)
   -- Local variables of the object / Variáveis locais do objeto
 
   local self = {}
-  local fuels = fuels.getFuels()
-  
+  local fuelsList = fuels.getFuels()
+
   local guiMessages = GUIMessages()
 
   local mt = {}
@@ -16,26 +16,33 @@ function FuelController(fuels)
     return 0
   end
 
-  setmetatable(fuels,mt)
+  setmetatable(fuelsList,mt)
+
+  fuels.setRefuelTries(0)
 
   -- Local functions of the object / Funções locais do objeto
-  local function fuelCalc(itemFuel,itemCount)
-    local needed = math.floor((turtle.getFuelLimit() - turtle.getFuelLevel())/itemFuel)
+  local function fuelCalc(itemFuel,itemCount,fuelAmount)
+    local needed = 0
+    if (fuelAmount == nil) then
+      needed = math.floor((turtle.getFuelLimit() - turtle.getFuelLevel())/itemFuel)
+    else
+      needed = fuelAmount/itemFuel
+    end
     if needed > 0 then
       if needed > itemCount then
         turtle.refuel()
       else
         turtle.refuel(needed)
       end
-      return false
-    else
-      return true
+      return true,true
     end
+    return true,false
   end
 
   -- Verifying if exists fuel in other slot / Verificando se existe combustível em outro espaço
-  local function smartRefuel()
-    local finish = false
+  local function smartRefuel(fuelAmount)
+    local success = false
+    local finished = false
     if turtle.getFuelLimit() - turtle.getFuelLevel() > 0 then
       guiMessages.showInfoMsg("Verifying fuel in all slots. [coal/lava]")
       for i = 1,16 do
@@ -43,15 +50,21 @@ function FuelController(fuels)
         if turtle.refuel(0) then
           local data = turtle.getItemDetail(i)
           if data ~= nil then
-            finish = fuelCalc(fuels[data.name],data.count)
-            if finish then
-              return sucess
+            success,finished = fuelCalc(fuelsList[data.name],data.count,fuelAmount)
+            if (finished) then
+              return true
+            else
+              if (fuelAmount~=nil) then
+                if (fuelAmount < self.fuelLevel()) then
+                  return true
+                end
+              end
             end
           end
         end
       end
     end
-    return sucess
+    return success
   end
 
   -- Global functions of the object / Funções globais do objeto
@@ -60,18 +73,21 @@ function FuelController(fuels)
   function self.fuelLevel()
     return turtle.getFuelLevel()
   end
-
+  
   -- Refuel function / Função de reabastecimento
-  function self.refuel()
+  function self.refuel(fuelAmount)
     if turtle.getFuelLevel() ~= "unlimited" then
       guiMessages.showHeader("Trying to refuel")
-      if smartRefuel() == false then
+      if (smartRefuel(fuelAmount) == false) then
         turtle.select(1)
+        fuels.addRefuelTries()
+        guiMessages.showErrorMsg("Failed")
         return false
       end
       turtle.select(1)
       guiMessages.showSuccessMsg("Finished")
     end
+    fuels.setRefuelTries(0)
     return true
   end
 

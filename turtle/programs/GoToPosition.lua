@@ -3,6 +3,7 @@ function GoToPosition(miningTurtle)
   local self = {}
   local miningT = miningTurtle
   local position = ((miningT.getData()).getObjects()).position
+  local guiMessages = guiCustomMessages or GUIMessages()
 
   -- Private functions / Funções privadas
 
@@ -59,16 +60,24 @@ function GoToPosition(miningTurtle)
   -- Global functions of the object / Funções Globais do objeto
 
   function self.backTo(x2,y2,z2)
-    adjustX(x2)
-    adjustZ(z2)
-    adjustY(y2)
-  end
-  
-  function self.goTo(x2,y2,z2)    
-    adjustY(y2)	
-    adjustZ(z2)
-	adjustX(x2)
-  end
+    if (miningT.doIHaveEnoughFuelToGo(x2,y2,z2)) then
+      adjustX(x2)
+      adjustZ(z2)
+      adjustY(y2)
+    else
+      guiMessages.showErrorMsg("I do not have fuel to do this task")
+      end
+    end
 
-  return self
-end
+    function self.goTo(x2,y2,z2)
+      if (miningT.doIHaveEnoughFuelToGo(x2,y2,z2)) then
+        adjustY(y2)
+        adjustZ(z2)
+        adjustX(x2)
+      else
+        guiMessages.showErrorMsg("I do not have fuel to do this task")
+        end
+      end
+
+      return self
+    end

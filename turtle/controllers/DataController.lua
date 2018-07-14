@@ -1,7 +1,7 @@
 function DataController(commonFunctions,root)
 
-  dofile(root .. "/objects/TableHandler.lua")  
-  
+  dofile(root .. "/objects/TableHandler.lua")
+
   dofile(root .. "/objects/Position.lua")
   dofile(root .. "/objects/PreviousPosition.lua")
   dofile(root .. "/objects/Execution.lua")
@@ -13,7 +13,7 @@ function DataController(commonFunctions,root)
   dofile(root .. "/objects/Escape.lua")
   dofile(root .. "/objects/GhostItems.lua")
   dofile(root .. "/objects/TurtleInfo.lua")
-  
+
   dofile(root .. "/GUI/GUIKeepData.lua")
 
   -- Local variables of the object / Variáveis locais do objeto
@@ -76,7 +76,7 @@ function DataController(commonFunctions,root)
     local autoConfig = true
 
     guiKP.begin()
-    values.Position,gpsWorks = guiKP.setPositionData(autoConfig)
+    values.Position = guiKP.setPositionData(autoConfig)
     values.PreviousPos = guiKP.setPreviousPosition(values.Position.x,values.Position.y,values.Position.z,values.Position.f)
     values.Home = guiKP.setHomeData(values.Position.x,values.Position.y,values.Position.z,autoConfig)
     values.Execution = guiKP.setExecutionData()

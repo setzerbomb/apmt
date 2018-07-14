@@ -72,7 +72,12 @@ function MiningT(root)
 
   local function move(movement,attack,action,changePositionData)
     while not movement() do
-      self.verifyFuel()
+      if (not self.verifyFuel()) then
+	    if (objects.execution.getExecuting() ~= "Maintenance") then
+		  objects.execution.setTerminate(true)		  
+		end
+		return false
+	  end
       attack()
       if not action() then
         if objects.escape.getTryToEscape() then
@@ -136,8 +141,11 @@ function MiningT(root)
   end
 
   function self.back()
+    local lowFuel = false
     while not turtle.back() do
-      self.verifyFuel()
+      if (self.verifyFuel()) then
+	    return false
+	  end
       self.attackForward()
       self.left()
       self.left()

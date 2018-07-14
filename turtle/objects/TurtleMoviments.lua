@@ -49,28 +49,33 @@ function TurtleMoviments(root)
     end
   end
 
-  local function action(moviment,changePositionData)
+  local function move(moviment,changePositionData)
     if not moviment() then
-      self.verifyFuel()
+      if (not self.verifyFuel()) then
+	    if (objects.execution.getExecuting() ~= "Maintenance") then
+		  objects.execution.setTerminate(true)
+		end
+		return false
+	  end
     else
       changePositionData()
-    end
+    end		
   end
 
   function self.up()
-    action(turtle.up,function() objects.position.addY(); self.saveAll(); end)
+    move(turtle.up,function() objects.position.addY(); self.saveAll(); end)
   end
 
   function self.down()
-    action(turtle.down,function() objects.position.subY(); self.saveAll(); end)
+    move(turtle.down,function() objects.position.subY(); self.saveAll(); end)
   end
 
   function self.forward()
-    action(turtle.forward,self.adjustGPSWhenGoForward)
+    move(turtle.forward,self.adjustGPSWhenGoForward)
   end
 
   function self.back()
-    action(turtle.back,self.adjustGPSWhenGoBack)
+    move(turtle.back,self.adjustGPSWhenGoBack)
   end
 
   function self.adjustGPSWhenGoForward()
@@ -99,10 +104,18 @@ function TurtleMoviments(root)
 
   function self.verifyFuel()
     if FuelC.fuelLevel() <= 10 then
-      return FuelC.refuel()
+	  if (not (objects.fuels.getRefuelTries() > 5)) then
+        return FuelC.refuel()
+	  else
+	    return false
+	  end
     else
       return true
     end
+  end
+  
+  function self.doIHaveEnoughFuelToGo(x,y,z)
+    return self.getDistance(x,y,z)+1 <= turtle.getFuelLevel()	
   end
 
   function self.forceRefuel()
@@ -123,10 +136,11 @@ function TurtleMoviments(root)
     return true
   end
 
-  function self.verifyFuelLevel()
+  function self.verifyFuelLevelToGoBackHome()
     local distance = calculateDistance(objects.position.getX(),objects.position.getY(),objects.position.getZ(),objects.home.getX(),objects.home.getY(),objects.home.getZ())
     local dXYZ = distance.x + distance.y + distance.z
-    if turtle.getFuelLevel() <= (dXYZ+50) then
+	--print(distance.x .. "+" .. distance.y .. "+" .. distance.z .. "+30 = " ..dXYZ+30 .. " <= " .. turtle.getFuelLevel())
+    if turtle.getFuelLevel() <= (dXYZ+30) then
       if not FuelC.refuel() then
         objects.execution.setTerminate(true)
       end
@@ -171,6 +185,7 @@ function TurtleMoviments(root)
   local function start()
     loadAndFillDataObjects()
     FuelC = FuelController((Data.getObjects()).fuels)
+	Data.saveData()
   end
   start()
 

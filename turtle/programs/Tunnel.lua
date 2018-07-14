@@ -20,7 +20,7 @@ function Tunnel(miningTurtle,guiCustomMessages,lim)
     else
       while specificLocalData.limit <= 0 do
         guiMessages.showHeader("Tunnel")
-		    print("What should be the size of the tunnel?[3x3x?]")
+        print("What should be the size of the tunnel?[3x3x?]")
         specificLocalData.limit = tonumber(commonF.limitToWrite(15))
         if specificLocalData.limit <= 0 then
           guiMessages.showWarningMsg("Informed value can't be zero or lower than zero")
@@ -103,9 +103,9 @@ function Tunnel(miningTurtle,guiCustomMessages,lim)
   function self.start()
     guiMessages.showInfoMsg("You can use torchs putting them on slot "..objects.light.getSlot()..", to customizations change the current config")
     while specificData.step <= specificData.limit-1 and  not objects.execution.getTerminate() do
+      miningT.verifyFuelLevelToGoBackHome()
       patternAction()
       miningT.enlighten("left",4)
-      miningT.verifyFuelLevel()
       addStep()
     end
     wasTerminated(objects.execution.getTerminate())

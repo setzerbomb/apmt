@@ -83,7 +83,7 @@ function Stairs(miningTurtle,guiCustomMessages)
     --guiMessages.showHeader("Stairs")
     guiMessages.showInfoMsg("You can use torchs putting them on slot "..objects.light.getSlot()..", to customizations change the current config")
     while objects.escape.getTries() <=0 and not objects.execution.getTerminate() do
-      miningT.verifyFuelLevel()
+      miningT.verifyFuelLevelToGoBackHome()
       patternAction()
       miningT.enlighten("left",4)
     end

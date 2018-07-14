@@ -28,6 +28,10 @@ function Storages()
   function self.disableEnder()
     data.enabled = false
   end
+  
+  function self.isEnabled()
+    return data.enabled
+  end
 
   function self.start(tabela)
     data = tabela
