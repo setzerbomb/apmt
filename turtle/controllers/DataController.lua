@@ -103,6 +103,10 @@ function DataController(commonFunctions,root)
     end
   end
 
+  local function tryToSave()
+    TableH.save(values,os.getComputerLabel())
+  end
+
   -- Retrieve the data from the config file / Puxa os dados do arquivo de configuração
   function self.load()
     if TableH.fileExists(os.getComputerLabel()) then
@@ -115,61 +119,64 @@ function DataController(commonFunctions,root)
 
   -- Save the data into the config file / Salva os dados no arquivo de configuração
   function self.saveData()
-    TableH.save(values,os.getComputerLabel())
-  end
+    commonFunctions.try(
+    tryToSave,
+    function(exeception) guiKP.showErrorMsg("DataController: Cautch exception while trying to save turtle data: " .. exeception) end
+  )
+end
 
-  -- Save the current execution / Salva a execução atual
-  function self.storeCurrentExecution()
-    objects.storedExecution.setExecuting(objects.execution.getExecuting())
-    objects.storedExecution.setStep(objects.execution.getStep())
-    objects.storedExecution.setSpecificData(deepcopy(objects.execution.getSpecificData()))
-    objects.storedExecution.setTerminate(objects.execution.getTerminate())
-    self.saveData()
-  end
+-- Save the current execution / Salva a execução atual
+function self.storeCurrentExecution()
+  objects.storedExecution.setExecuting(objects.execution.getExecuting())
+  objects.storedExecution.setStep(objects.execution.getStep())
+  objects.storedExecution.setSpecificData(deepcopy(objects.execution.getSpecificData()))
+  objects.storedExecution.setTerminate(objects.execution.getTerminate())
+  self.saveData()
+end
 
-  -- Restore a stopped execution / Restaura uma execução pausada
-  function self.restoreStoredExecution()
-    if objects.storedExecution.getExecuting() ~= "" then
-      objects.execution.setExecuting(objects.storedExecution.getExecuting())
-      objects.execution.setStep(objects.storedExecution.getStep())
-      objects.execution.setSpecificData(deepcopy(objects.storedExecution.getSpecificData()))
-      objects.execution.setTerminate(false)
-      objects.storedExecution.setExecuting("")
-      objects.storedExecution.setStep(0)
-      objects.storedExecution.setSpecificData(nil)
-      objects.storedExecution.setTerminate(false)
-      self.saveData()
-    end
-  end
-
-  -- Finalize the current execution
-  function self.finalizeExecution()
-    objects.execution.setExecuting("")
-    objects.execution.setStep(0)
-    objects.execution.setSpecificData(nil)
+-- Restore a stopped execution / Restaura uma execução pausada
+function self.restoreStoredExecution()
+  if objects.storedExecution.getExecuting() ~= "" then
+    objects.execution.setExecuting(objects.storedExecution.getExecuting())
+    objects.execution.setStep(objects.storedExecution.getStep())
+    objects.execution.setSpecificData(deepcopy(objects.storedExecution.getSpecificData()))
     objects.execution.setTerminate(false)
+    objects.storedExecution.setExecuting("")
+    objects.storedExecution.setStep(0)
+    objects.storedExecution.setSpecificData(nil)
+    objects.storedExecution.setTerminate(false)
     self.saveData()
   end
+end
 
-  -- Save the current position / Salva a posição atual
-  function self.storeCurrentPosition()
-    objects.previousPosition.setX(objects.position.getX())
-    objects.previousPosition.setY(objects.position.getY())
-    objects.previousPosition.setZ(objects.position.getZ())
-    objects.previousPosition.setF(objects.position.getF())
-  end
+-- Finalize the current execution
+function self.finalizeExecution()
+  objects.execution.setExecuting("")
+  objects.execution.setStep(0)
+  objects.execution.setSpecificData(nil)
+  objects.execution.setTerminate(false)
+  self.saveData()
+end
 
-  function self.previousPosIsHome()
-    objects.previousPosition.setX(objects.home.getX())
-    objects.previousPosition.setY(objects.home.getY())
-    objects.previousPosition.setZ(objects.home.getZ())
-  end
+-- Save the current position / Salva a posição atual
+function self.storeCurrentPosition()
+  objects.previousPosition.setX(objects.position.getX())
+  objects.previousPosition.setY(objects.position.getY())
+  objects.previousPosition.setZ(objects.position.getZ())
+  objects.previousPosition.setF(objects.position.getF())
+end
 
-  -- Getters
+function self.previousPosIsHome()
+  objects.previousPosition.setX(objects.home.getX())
+  objects.previousPosition.setY(objects.home.getY())
+  objects.previousPosition.setZ(objects.home.getZ())
+end
 
-  function self.getObjects()
-    return objects
-  end
+-- Getters
 
-  return self
+function self.getObjects()
+  return objects
+end
+
+return self
 end

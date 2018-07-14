@@ -50,6 +50,12 @@ function Maintenance(miningTurtle,guiCustomMessages)
     miningT.saveAll()
   end
 
+  local function restart()
+    finalize()
+    main()
+    os.reboot()
+  end
+
   local function searchChest()
     local isFull,j,item
     local upChestExists
@@ -124,9 +130,7 @@ function Maintenance(miningTurtle,guiCustomMessages)
         return false
       end
     else
-      finalize()
-      main()
-      os.reboot()
+      restart()
     end
     return true
   end
@@ -271,9 +275,7 @@ function Maintenance(miningTurtle,guiCustomMessages)
       miningT.back()
       if (not(verifyIfEnderStoragesAreSetUp(objects.storages.getSlotIn()) and verifyIfEnderStoragesAreSetUp(objects.storages.getSlotOut()))) then
         objects.storages.disableEnder()
-        finalize()
-        main()
-        os.reboot()
+        restart()
       end
     end,
     [1] = function(x)
@@ -289,7 +291,7 @@ function Maintenance(miningTurtle,guiCustomMessages)
           if (j ~= objects.light.getSlot() or lightGhosts[item.name] == nil) and ((j ~= objects.storages.getSlotOut() and j ~= objects.storages.getSlotIn()) or storageGhosts[item.name] == nil) then
             if not (lightGhosts[item.name] ~= nil or combustiveis[item.name] ~= 0 or storageGhosts[item.name] ~= nil) then
               if not turtle.drop() then
-                return false
+                restart()
               end
             end
           end
@@ -327,7 +329,7 @@ function Maintenance(miningTurtle,guiCustomMessages)
         else
           local foundEmptySlot = false
           local iterator = 1
-          print("teste")
+          --print("teste")
           while (not foundEmptySlot and iterator <=16) do
             if (turtle.getItemCount(iterator) == 0 and (iterator ~= objects.light.getSlot() and iterator ~= objects.storages.getSlotOut() and iterator ~= objects.storages.getSlotIn())) then
               foundEmptySlot = true
@@ -374,6 +376,7 @@ function Maintenance(miningTurtle,guiCustomMessages)
       actionsCase = enderStorageActionsCase
     else
       actionsCase = localStorageActionsCase
+      guiMessages.showInfoMsg("Well, let's get back to home")
       goHome()
     end
     patternAction()

@@ -149,7 +149,8 @@ function GUIKeepData(commonFunctions)
   function self.begin()
     if turtle.getFuelLevel() <=0 then
       self.showInfoMsg("The Turtle will try to auto configure, to successful do, it'll needs some fuel")
-        self.showInfoMsg("Put some coal or a lava bucket in the next 10 seconds")
+        self.showInfoMsg("Put some coal or a lava bucket in the next 10 seconds at the first slot")
+        self.showInfoMsg("Put a normal minecraft chest above the turtle and in one of each sides")
         sleep(10)
         turtle.select(1)
         if not turtle.refuel() then
