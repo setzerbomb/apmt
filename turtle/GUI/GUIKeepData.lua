@@ -32,9 +32,9 @@ function GUIKeepData(commonFunctions)
           success = true
         else
           if (hasAditionalCondition) then
-            self.showWarningMsg("Slot value must be between 12 and 16 and different than: [" .. forbiddenValue .. "]")
+            self.showWarningMsg("Slot value must be between "..slotMin.." and "..slotMax.." and different than: [" .. forbiddenValue .. "]")
           else
-            self.showWarningMsg("Slot value must be between 12 and 16")
+            self.showWarningMsg("Slot value must be between "..slotMin.." and "..slotMax..")
           end
         end
       end
