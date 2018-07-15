@@ -15,7 +15,7 @@ function Tunnel(miningTurtle,guiCustomMessages,lim)
     specificLocalData = {}
     specificLocalData.limit = 0
     specificLocalData.step = 0
-    if limit ~= nil then
+    if tonumber(limit) ~= nil then
       specificLocalData.limit = limit
     else
       while specificLocalData.limit <= 0 do

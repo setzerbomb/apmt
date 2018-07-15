@@ -64,5 +64,5 @@ function LoadPeripherals ()
 
   start()
 
-   return self
+  return self
 end

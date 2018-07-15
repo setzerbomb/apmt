@@ -18,7 +18,7 @@ function Quarry(miningTurtle,guiMessages,x,y)
     specificLocalData.stepY = 0
     specificLocalData.y = 0
     specificLocalData.x = 0
-    if posX~=nil and posY~=nil then
+    if tonumber(posX)~=nil and tonumber(posY)~=nil then
       specificLocalData.x = posX
       specificLocalData.y = posY
     else
@@ -68,39 +68,43 @@ function Quarry(miningTurtle,guiMessages,x,y)
 
   local actionsCase = commonF.switch{
     [0] = function(x)
-      while specificData.stepX < specificData.x-1 do
+      while specificData.stepX < specificData.x-1 and not objects.execution.getTerminate() do
         miningT.forward()
         addStepX()
       end
-      specificData.stepX = 0
+      if not objects.execution.getTerminate() then
+        specificData.stepX = 0
+      end
     end,
     [1] = function(x)
-      if specificData.turn then
-        if specificData.stepY < specificData.y-1 then
-          miningT.left()
-          miningT.forward()
-          miningT.left()
-          addStepY()
+      if (not objects.execution.getTerminate()) then
+        if specificData.turn then
+          if specificData.stepY < specificData.y-1 then
+            miningT.left()
+            miningT.forward()
+            miningT.left()
+            addStepY()
+          else
+            miningT.left()
+            miningT.left()
+            specificData.stepY = 0
+            specificData.descend = true
+          end
+          specificData.turn = false
         else
-          miningT.left()
-          miningT.left()
-          specificData.stepY = 0
-          specificData.descend = true
+          if specificData.stepY < specificData.y-1 then
+            miningT.right()
+            miningT.forward()
+            miningT.right()
+            addStepY()
+          else
+            miningT.right()
+            miningT.right()
+            specificData.stepY = 0
+            specificData.descend = true
+          end
+          specificData.turn = true
         end
-        specificData.turn = false
-      else
-        if specificData.stepY < specificData.y-1 then
-          miningT.right()
-          miningT.forward()
-          miningT.right()
-          addStepY()
-        else
-          miningT.right()
-          miningT.right()
-          specificData.stepY = 0
-          specificData.descend = true
-        end
-        specificData.turn = true
       end
     end,
     [2] = function(x)
@@ -114,13 +118,17 @@ function Quarry(miningTurtle,guiMessages,x,y)
   }
 
   local function patternAction()
-    while objects.execution.getStep() <=2 do
+    while objects.execution.getStep() <=2 and not objects.execution.getTerminate()  do
       actionsCase:case(objects.execution.getStep())
-      objects.execution.addStep()
+      if (not objects.execution.getTerminate()) then
+        objects.execution.addStep()
+        miningT.saveAll()
+      end
+    end
+    if (not objects.execution.getTerminate()) then
+      objects.execution.setStep(0)
       miningT.saveAll()
     end
-    objects.execution.setStep(0)
-    miningT.saveAll()
   end
 
   local function wasTerminated(terminate)

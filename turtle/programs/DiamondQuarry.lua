@@ -18,7 +18,7 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
     specificLocalData.stepY = 0
     specificLocalData.y = 0
     specificLocalData.x = 0
-    if posX ~= nil and posY ~= nil then
+    if tonumber(posX) ~= nil and tonumber(posY) ~= nil then
       specificLocalData.x = posX
       specificLocalData.y = posY
     else
@@ -67,31 +67,36 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
   local actionsCase = commonF.switch{
     [0] = function(x)
       while specificData.stepX <= specificData.x-1 and not objects.execution.getTerminate() do
+        --guiMessages.debug("Step " .. objects.execution.getStep() .. " : ".. specificData.x .. " = x >= stepX = " .. specificData.stepX .. " , " .. specificData.y .. " = y >= " .. specificData.stepY)
         miningT.forward()
         miningT.digUp()
         miningT.digDown()
         addStepX()
         miningT.enlighten("down",27)
       end
-      specificData.stepX = 0
+      if not objects.execution.getTerminate() then
+        specificData.stepX = 0
+      end
     end,
     [1] = function(x)
-      if specificData.turn then
-        miningT.left()
-        miningT.forward()
-        miningT.digUp()
-        miningT.digDown()
-        miningT.left()
-        specificData.turn = false
-      else
-        miningT.right()
-        miningT.forward()
-        miningT.digUp()
-        miningT.digDown()
-        miningT.right()
-        specificData.turn = true
+      if (not objects.execution.getTerminate()) then
+        if specificData.turn then
+          miningT.left()
+          miningT.forward()
+          miningT.digUp()
+          miningT.digDown()
+          miningT.left()
+          specificData.turn = false
+        else
+          miningT.right()
+          miningT.forward()
+          miningT.digUp()
+          miningT.digDown()
+          miningT.right()
+          specificData.turn = true
+        end
+        addStepY()
       end
-      addStepY()
     end,
     default = function (x) return 0 end
   }
@@ -99,11 +104,15 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
   local function patternAction()
     while objects.execution.getStep() <=1 and not objects.execution.getTerminate() do
       actionsCase:case(objects.execution.getStep())
-      objects.execution.addStep()
+      if (not objects.execution.getTerminate()) then
+        objects.execution.addStep()
+        miningT.saveAll()
+      end
+    end
+    if (not objects.execution.getTerminate()) then
+      objects.execution.setStep(0)
       miningT.saveAll()
     end
-    objects.execution.setStep(0)
-    miningT.saveAll()
   end
 
   local function wasTerminated(terminate)

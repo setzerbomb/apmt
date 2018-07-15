@@ -441,10 +441,10 @@ local function CommonFunctions()
 		putModem()
 		putDriverAndDisk()
 		if (not fileExists("disk/main.lua")) then
-			fs.copy("main.lua","disk/main.lua")
+			fs.copy("gps/main.lua","disk/main.lua")
 		end
 		if (not fileExists("disk/start.lua")) then
-			fs.copy("start.lua","disk/start.lua")
+			fs.copy("gps/start.lua","disk/start.lua")
 		end
 
 		updateInstaller(pos)

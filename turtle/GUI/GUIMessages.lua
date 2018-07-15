@@ -11,7 +11,7 @@ function GUIMessages()
       print(msg)
     end
   end
-  
+
   function self.showErrorMsg(msg)
     showMsgInColor(msg,colors.red)
     print("")
@@ -31,6 +31,13 @@ function GUIMessages()
 
   function self.showHeader(msg)
     showMsgInColor(msg,colors.blue)
+  end
+
+  function self.debug(msg)
+    local p = LoadPeripherals()
+    p.openWirelessModem(p.getTypes())
+    showMsgInColor(msg,colors.orange)
+    rednet.broadcast(msg,"debug")
   end
 
   return self
