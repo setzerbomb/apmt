@@ -18,7 +18,17 @@ This project was designed to run on ComputerCraft 1.7.5 at Minecraft 1.7.10 vers
 
 ### Installing
 
-The project wasn't tested on a real Minecraft Server, so in the fallowing instructions, was considered that it's going to run on local enviroment.
+The easy way, direct to your turtle. [Thanks to Bomb Bloke] (http://www.computercraft.info/forums2/index.php?/user/15121-bomb-bloke/)
+
+```
+pastebin get cUYTGbpb bbpack
+bbpack mount https://github.com/setzerbomb/apmt/tree/master install
+cp install\turtle turtle
+mv turtle\startup startup
+reboot
+```
+
+The hard way:
 
 - 1: Clone the repo on your machine and put the turtle folder at a folder related to a turtle on your minecraft world
 - 2: Move the startup file inside the turtle folder to the previous folder (the folder related to your turtle)
