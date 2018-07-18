@@ -18,7 +18,7 @@ This project was designed to run on ComputerCraft 1.7.5 at Minecraft 1.7.10 vers
 
 ### Installing
 
-The easy way, direct to your turtle. [Thanks to Bomb Bloke] (http://www.computercraft.info/forums2/index.php?/user/15121-bomb-bloke/)
+The easy way, direct to your turtle. [Thanks to Bomb Bloke](http://www.computercraft.info/forums2/index.php?/user/15121-bomb-bloke/)
 
 ```
 pastebin get cUYTGbpb bbpack
