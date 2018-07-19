@@ -1,4 +1,4 @@
-function Tunnel(miningTurtle,guiCustomMessages,lim)
+function Tunnel(miningTurtle,guiCustomMessages,master)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local miningT = miningTurtle
@@ -6,7 +6,6 @@ function Tunnel(miningTurtle,guiCustomMessages,lim)
   local commonF = miningT.getCommonF()
   local objects = Data.getObjects()
   local specificData
-  local limit = lim
   local guiMessages = guiCustomMessages or GUIMessages()
 
   -- Private functions / Funções privadas
@@ -15,8 +14,8 @@ function Tunnel(miningTurtle,guiCustomMessages,lim)
     specificLocalData = {}
     specificLocalData.limit = 0
     specificLocalData.step = 0
-    if tonumber(limit) ~= nil then
-      specificLocalData.limit = limit
+    if master~=nil then
+      specificLocalData.limit = master.task.params[1]
     else
       while specificLocalData.limit <= 0 do
         guiMessages.showHeader("Tunnel")
@@ -88,12 +87,14 @@ function Tunnel(miningTurtle,guiCustomMessages,lim)
       Data.storeCurrentPosition()
       Data.storeCurrentExecution()
       Data.saveData()
-      local maintenance = Maintenance(miningT)
+	    local maintenance = Maintenance(miningT,guiMessages)
       maintenance.start()
     else
       Data.finalizeExecution()
+	    objects.task.setStatus(true)
+	    objects.task.complete()
       Data.previousPosIsHome()
-      local maintenance = Maintenance(miningT)
+      local maintenance = Maintenance(miningT,guiMessages)
       maintenance.start()
     end
   end

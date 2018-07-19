@@ -69,15 +69,15 @@ function GoToPosition(miningTurtle)
       end
     end
 
-    function self.goTo(x2,y2,z2)
-      if (miningT.doIHaveEnoughFuelToGo(x2,y2,z2)) then
-        adjustY(y2)
-        adjustZ(z2)
-        adjustX(x2)
-      else
-        guiMessages.showErrorMsg("I do not have fuel to do this task")
-        end
-      end
+  function self.goTo(x2,y2,z2)
+    if (miningT.doIHaveEnoughFuelToGo(x2,y2,z2)) then
+      adjustY(y2)
+      adjustZ(z2)
+      adjustX(x2)
+    else
+      guiMessages.showErrorMsg("I do not have fuel to do this task")
+    end
+  end
 
       return self
     end

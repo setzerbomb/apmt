@@ -6,7 +6,7 @@ function GUIKeepData(commonFunctions)
 
   -- Private functions / Funções privadas
 
-  local function booleanResp(msg)
+  local function booleanInput(msg)
     print(msg)
     local resp = io.read()
     if resp == "y" or resp =="Y" then
@@ -45,6 +45,11 @@ function GUIKeepData(commonFunctions)
   local function numberInput(message)
     print(message)
     return tonumber(io.read())
+  end
+  
+  local function stringInput(message)
+    print(message)
+	return io.read()
   end
 
   local function coordinatesInputVerifier(thing,axisList,coordinates)
@@ -194,7 +199,7 @@ function GUIKeepData(commonFunctions)
         storages.slotIn = slotInputWithConditions("Input EnderStorage",12,16,false)
         print("")
         storages.slotOut = slotInputWithConditions("Output EnderStorage",12,16,true,storages.slotOut ~= storages.slotIn,storages.slotIn)
-        storages.enabled = booleanResp("Woul you like to enable the Ender Storages? [y/n]")
+        storages.enabled = booleanInput("Woul you like to enable the Ender Storages? [y/n]")
       end
       return storages
     end
@@ -240,7 +245,7 @@ function GUIKeepData(commonFunctions)
         l.step = 0
         storages.slotIn = slotInputWithConditions("Torch",12,16,false)
         self.showInfoMsg("The Torch slot will be " .. l.slot)
-        l.enabled = booleanResp("Would you like to enable the torchs use? [y/n]")
+        l.enabled = booleanInput("Would you like to enable the torchs use? [y/n]")
       end
       return l
     end
@@ -260,11 +265,12 @@ function GUIKeepData(commonFunctions)
       local turtleI = {}
       if auto then
         turtleI.world = "minecraft"
+		turtleI.isSlave = false
       else
         while turtleI.world == nil do
-          self.showHeader("--------Aditional Configuration--------")
-          print("Type the world name")
-          turtleI.world = io.read()
+          self.showHeader("--------Aditional Configuration--------")	  
+          turtleI.world = stringInput("Type the world name")
+		  turtleI.isSlave = booleanInput("Do you want to change enable the slave behavior? [y,n]")
         end
       end
       turtleI.id = os.getComputerID()
@@ -288,7 +294,7 @@ function GUIKeepData(commonFunctions)
     function self.setHomeData(x,y,z,auto)
       self.showInfoMsg("x="..x.." y="..y.." z="..z)
       if (not auto) then
-        if booleanResp("Do you like to inform the house position now? [y/n]") then
+        if booleanInput("Do you like to inform the house position now? [y/n]") then
           return self.homeManualSet()
         end
       end

@@ -1,4 +1,4 @@
-function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
+function DiamondQuarry(miningTurtle,guiCustomMessages,master)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local miningT = miningTurtle
@@ -6,7 +6,6 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
   local commonF = miningT.getCommonF()
   local objects = Data.getObjects()
   local specificData
-  local posX,posY = x,y
   local guiMessages = guiCustomMessages or GUIMessages()
   -- Private functions / Funções privadas
 
@@ -18,9 +17,9 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
     specificLocalData.stepY = 0
     specificLocalData.y = 0
     specificLocalData.x = 0
-    if tonumber(posX) ~= nil and tonumber(posY) ~= nil then
-      specificLocalData.x = posX
-      specificLocalData.y = posY
+    if master~=nil then
+      specificLocalData.x = master.task.params[1]
+      specificLocalData.y = master.task.params[2]
     else
       while specificLocalData.y<=0 or specificLocalData.x<=0 do
         guiMessages.showHeader("Diamond Quarry")
@@ -120,12 +119,14 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,x,y)
       Data.storeCurrentPosition()
       Data.storeCurrentExecution()
       Data.saveData()
-      local maintenance = Maintenance(miningT)
+	    local maintenance = Maintenance(miningT,guiMessages)
       maintenance.start()
     else
       Data.finalizeExecution()
+	    objects.task.setStatus(true)
+	    objects.task.complete()
       Data.previousPosIsHome()
-      local maintenance = Maintenance(miningT)
+      local maintenance = Maintenance(miningT,guiMessages)
       maintenance.start()
     end
   end

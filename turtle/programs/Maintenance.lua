@@ -16,6 +16,11 @@ function Maintenance(miningTurtle,guiCustomMessages)
   local actionsCase = nil
   -- Private functions / Funções privadas
 
+  local function talkWithMaster()
+    objects.task.setStatus(false)
+	objects.task.complete()
+  end
+
   local imInHome = function(x,y,z)
     if ((objects.home.getX() == x) and (objects.home.getY() == y) and (objects.home.getZ() == z)) then
       return true
@@ -400,6 +405,7 @@ function Maintenance(miningTurtle,guiCustomMessages)
       finalize()
       Data.restoreStoredExecution()
       if not specificData.goBack then
+	      talkWithMaster()
         finalize()
       end
       os.reboot()

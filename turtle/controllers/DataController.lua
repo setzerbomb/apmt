@@ -13,6 +13,7 @@ function DataController(commonFunctions,root)
   dofile(root .. "/objects/Escape.lua")
   dofile(root .. "/objects/GhostItems.lua")
   dofile(root .. "/objects/TurtleInfo.lua")
+  dofile(root .. "/objects/Task.lua")
 
   dofile(root .. "/GUI/GUIKeepData.lua")
 
@@ -32,6 +33,7 @@ function DataController(commonFunctions,root)
   objects.storedExecution = StoredExecution()
   objects.escape = Escape()
   --objects.outsideCommunication = OutsideCommunication()
+  objects.task = Task()
   objects.turtleInfo = TurtleInfo()
   objects.fuels = Fuels()
   objects.ghosts = GhostItems()
@@ -67,6 +69,7 @@ function DataController(commonFunctions,root)
     objects.fuels.start(values.Fuels)
     objects.ghosts.start(values.Ghosts)
     objects.storages.start(values.Storages)
+	  objects.task.start(values.Task)
   end
 
   -- Create a new set data if the data file is empty / Cria um novo conjunto de dados se o arquivo de dados está vazio
@@ -88,6 +91,7 @@ function DataController(commonFunctions,root)
     values.Fuels = guiKP.setFuels(autoConfig)
     values.Ghosts = guiKP.setGhosts(autoConfig)
     values.Storages = guiKP.setStorages(autoConfig)
+	  values.Task = {}
     fillObjects()
     self.saveData()
   end

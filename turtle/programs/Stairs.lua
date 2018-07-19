@@ -1,4 +1,4 @@
-function Stairs(miningTurtle,guiCustomMessages)
+function Stairs(miningTurtle,guiCustomMessages,master)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local miningT = miningTurtle
@@ -68,12 +68,14 @@ function Stairs(miningTurtle,guiCustomMessages)
       Data.storeCurrentPosition()
       Data.storeCurrentExecution()
       Data.saveData()
-      local maintenance = Maintenance(miningT)
+	    local maintenance = Maintenance(miningT,guiMessages)    
       maintenance.start()
     else
       Data.finalizeExecution()
+	    objects.task.setStatus(true)
+	    objects.task.complete()
       Data.previousPosIsHome()
-      local maintenance = Maintenance(miningT)
+      local maintenance = Maintenance(miningT,guiMessages)
       maintenance.start()
     end
   end

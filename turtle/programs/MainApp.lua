@@ -2,6 +2,7 @@ function MainApp(root)
 
   dofile(root .. "/objects/CommonFunctions.lua")
   dofile(root .. "/objects/MiningT.lua")
+  dofile(root .. "/objects/Communicator.lua")
 
   dofile(root .. "/programs/Configuration.lua")
   dofile(root .. "/programs/Maintenance.lua")
@@ -17,11 +18,14 @@ function MainApp(root)
   self = {}
 
   local miningT = MiningT(root)
-  local execution = ((miningT.getData()).getObjects()).execution
+  local objects = (miningT.getData()).getObjects()
+  local execution = objects.execution
   local commonF = miningT.getCommonF()
   local guiMessages = GUIMessages()
   local guiMain = GUIMain(commonF,guiMessages)
   local continue,showMainMenu,showApps = true,true,true
+  local turtleProcotol = nil
+  local server = nil
 
   local mainCase = commonF.switch{
     [1] = function(x)
@@ -52,7 +56,7 @@ function MainApp(root)
     [4] = function(x)
       local gtp = GoToPosition(miningT,guiMessages)
       x,y,z = guiMain.goToXYZ()
-      if x~=0 and y~=0 and z~=0 then
+      if (x~=nil and y>4 and z~=nil) then
         miningT.down()
         gtp.goTo(x,y,z)
       end
@@ -71,7 +75,7 @@ function MainApp(root)
     default = function (x) print("Invalid Option") end
   }
 
-  local function continueExecution()
+  local function continueExecutionIf()
     if execution.getExecuting() ~= "" then
       if execution.getExecuting() == "Stairs" then
         appsCase:case(1)
@@ -91,6 +95,96 @@ function MainApp(root)
     end
   end
 
+  local function continueExecution()
+    while continue do
+      turtle.select(1)
+      continueExecutionIf()
+      if showMainMenu then
+        mainCase:case(tonumber(guiMain.menu()))
+      end
+    end
+  end
+
+  local function stabilishFirstConnection(communicator)
+    for i = 1,5 do
+      local protocolData = communicator.protocolGenerator()
+      if (protocolData[3]) then
+        turtleProcotol = protocolData[1]
+        server = protocolData[2]
+        return true
+      end
+    end
+    return false
+  end
+
+  local function executeSlaveTask(task,master)
+    if task.execution == "GoToPosition" then
+      if next(task.params) ~= nil then
+        local gtp = GoToPosition(miningT,guiMessages)
+        local x,y,z = task.params[1],task.params[2],task.params[3]
+        if (tonumber(x)~=nil and tonumber(y)~=nil and tonumber(z)~=nil) then
+          if (y>4) then
+            miningT.down()
+            gtp.goTo(x,y,z)
+          end
+          print("Finish Task")
+          Communicator().finishTask(objects.task.getData(),true,server,turtleProcotol)
+          objects.task.reset()
+        end
+      end
+      --communicator.finishTask(task,false,server,turtleProcotol)
+    end
+    if task.execution == "Stairs" then
+      local stairs = Stairs(miningT,guiMessages,master)
+      stairs.start()
+    end
+    if task.execution == "Tunnel" then
+      if next(task.params) ~= nil then
+        local tunnel = Tunnel(miningT,guiMessages,master)
+        tunnel.start()
+      end
+      --communicator.finishTask(task,false,server,turtleProcotol)
+    end
+    if task.execution == "Quarry" then
+      if next(task.params) ~= nil then
+        local quarry = Quarry(miningT,guiMessages,master)
+        quarry.start()
+      end
+      --communicator.finishTask(task,false,server,turtleProcotol)
+    end
+    if task.execution == "DiamondQuarry" then
+      if next(task.params) ~= nil then
+        local diamondQuarry = DiamondQuarry(miningT,guiMessages,master)
+        diamondQuarry.start()
+      end
+      --communicator.finishTask(task,false,server,turtleProcotol)
+    end
+  end
+
+  local function slaveBehavior(communicator)
+    local task = communicator.waitForTask(turtleProcotol)
+    guiMessages.showInfoMsg(textutils.serialize(task))
+    local times = 1
+    if (task.execution~=nil and task.execution ~= "") then
+      local master = {["task"] = task,["server"] = server,["protocol"] = turtleProcotol}
+      objects.task.set(master.task)
+      miningT.saveAll()
+      executeSlaveTask(task,master)
+    else
+      guiMessages.showErrorMsg("Turtle couldn't find a task to execute")
+      print("Waiting" .. (3-times) .. " more times")
+      if times > 3 then
+        guiMessages.showInfoMsg("Disabling Ender and Slave Behavior")
+        objects.turtleInfo.deactivateSlaveBehavior()
+        objects.storages.disableEnder()
+        guiMessages.showInfoMsg("Executing Maintenance")
+        appsCase:case(3)
+      else
+        times = times + 1
+      end
+    end
+  end
+
   function self.apps(guiMain)
     showApps = true
     while continue and showApps do
@@ -102,18 +196,57 @@ function MainApp(root)
 
   function self.main()
     local r = 0;
-    guiMessages.showInfoMsg("Type something to access the main menu if there is some execution running")
-    r = commonF.limitToWrite(2.5)
-    if r == 0 then
-      while continue do
-        turtle.select(1)
-        continueExecution()
-        if showMainMenu then
-          mainCase:case(tonumber(guiMain.menu()))
+    if (objects.turtleInfo.isSlave()) then
+      guiMessages.showInfoMsg("Type something to access the turtle configuration")
+      r = commonF.limitToWrite(1)
+      if r ~= 0 then
+        mainCase:case(1)
+      else
+        local communicator = Communicator(commonF)
+        if execution.getExecuting() == "" then
+          if stabilishFirstConnection(communicator) then
+            if objects.task.getExecution() ~= nil and objects.task.getExecution() ~= "" then
+              if (objects.task.isComplete() == true) then
+                print("Finish Task")
+                communicator.finishTask(objects.task.getData(),true,server,turtleProcotol)
+                objects.task.reset()
+              else
+                executeSlaveTask(objects.task.getData(), {["task"] = objects.task.getData(),["server"] = server,["protocol"] = turtleProcotol})
+              end
+            end
+            guiMessages.showSuccessMsg("Success on stablishing connection with server")
+            guiMessages.showInfoMsg("Using protocol: " .. turtleProcotol)
+            guiMessages.showInfoMsg("Waiting for tasks...")
+            while (objects.turtleInfo.isSlave()) do
+              if execution.getExecuting() == "" then
+                slaveBehavior(communicator)
+              else
+                continueExecution()
+              end
+            end
+          else
+            guiMessages.showErrorMsg("Couldn't find a server, going back to home")
+            local x,y,z = objects.home.getX(),objects.home.getY(),objects.home.getZ()
+            local gtp = GoToPosition(miningT,guiMessages)
+            gtp.backTo(x,y,z)
+            objects.task.reset()
+            Data.finalizeExecution()
+            Data.previousPosIsHome()
+            guiMessages.showInfoMsg("Executing Maintenance")
+            appsCase:case(3)
+          end
+        else
+          continueExecution()
         end
       end
     else
-      mainCase:case(tonumber(guiMain.menu()))
+      guiMessages.showInfoMsg("Type something to access the main menu if there is some execution running")
+      r = commonF.limitToWrite(2.5)
+      if r == 0 then
+        continueExecution()
+      else
+        mainCase:case(tonumber(guiMain.menu()))
+      end
     end
   end
 

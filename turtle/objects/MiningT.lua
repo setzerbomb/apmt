@@ -13,8 +13,15 @@ function MiningT(root)
   local possibilities = {1,2,3,4}
   local item, r = nil,nil
   local lightController = LightController(self)
+  local oldseed = os.time()
 
   -- Local functions
+  
+  local function randomness(minimo,maximo)      
+    math.randomseed(oldseed)
+    oldseed = ((oldseed - math.tan(os.time()))*((os.clock()*1000) + (os.time()/1000)))/oldseed
+    return math.random(minimo,maximo)
+  end
 
   local function reset()
     for i=1,4 do
@@ -24,7 +31,7 @@ function MiningT(root)
 
   local function randomAction()
     if #possibilities > 1 then
-      r = possibilities[self.randomness(1,#possibilities)]
+      r = possibilities[randomness(1,#possibilities)]
       table.remove(possibilities,r)
     else
       possibilities[1] = nil
@@ -46,7 +53,7 @@ function MiningT(root)
         end
       end
     else
-      if self.randomness(1,2) == 1 then
+      if randomness(1,2) == 1 then
         return self.left()
       else
         return self.right()
@@ -109,12 +116,6 @@ function MiningT(root)
   end
 
   -- Global functions of the object / Funções Globais do objeto
-
-  function self.randomness(minimo,maximo)
-    math.randomseed(oldseed)
-    oldseed = ((oldseed - math.tan(os.time()))*((os.clock()*1000) + (os.time()/1000)))/oldseed
-    return math.random(minimo,maximo)
-  end
 
   function self.digForward()
     return dig(self.detect,turtle.inspect,"front",turtle.dig)

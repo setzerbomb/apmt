@@ -2,7 +2,7 @@ function Configuration(miningTurtle)
   local dc = miningTurtle.getData()
   local commonF = miningTurtle.getCommonF()
   local limit = 15
-  local cotinue = true
+  local continue = true
   local objects = dc.getObjects()
   local guiKP = GUIKeepData(commonF)
 
@@ -36,6 +36,7 @@ function Configuration(miningTurtle)
       objects.previousPosition.setY(objects.position.getY())
       objects.previousPosition.setZ(objects.position.getZ())
       objects.previousPosition.setF(objects.position.getF())
+	    objects.task.reset()
       guiKP.showSuccessMsg("Done")
     end,
     [4] = function(x)
@@ -55,6 +56,11 @@ function Configuration(miningTurtle)
     [5] = function(x)
       local localTable = guiKP.setTurtleInfo()
       objects.turtleInfo.setWorld(localTable.world)
+	    if (localTable.isSlave) then
+	      objects.turtleInfo.activateSlaveBehavior()
+	    else
+	      objects.turtleInfo.deactivateSlaveBehavior()
+	    end
       guiKP.showSuccessMsg("Done")
     end,
     [6] = function(x)
@@ -75,12 +81,12 @@ function Configuration(miningTurtle)
       end
       guiKP.showSuccessMsg("Done")
     end,
-    [7] = function(x) dc.saveData() cotinue = false guiKP.showSuccessMsg("Saved") end,
-    [8] = function(x) cotinue = false end,
+    [7] = function(x) dc.saveData(); continue = false; guiKP.showSuccessMsg("Saved"); if objects.turtleInfo.isSlave() then os.reboot(); end end,
+    [8] = function(x) continue = false end,
     default = function (x) guiKP.showErrorMsg("Invalid option") end
   }
 
-  while cotinue do
+  while continue do
     dataCase:case(tonumber(guiKP.menu()))
   end
 end

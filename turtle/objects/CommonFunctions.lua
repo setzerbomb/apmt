@@ -1,5 +1,7 @@
 function CommonFunctions()
   local self = {}
+  
+  local oldseed = os.time()
 
   function self.switch(t)
     t.case = function (self,x)
@@ -35,6 +37,12 @@ function CommonFunctions()
         end
       end
     end
+  end
+  
+  function self.randomness(minimo,maximo)      
+    math.randomseed(oldseed)
+    oldseed = ((oldseed - math.tan(os.time()))*((os.clock()*1000) + (os.time()/1000)))/oldseed
+    return math.random(minimo,maximo)
   end
 
   return self
