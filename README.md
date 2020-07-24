@@ -1,6 +1,6 @@
 # Almost Persistent Mining Turtle
 
-This project tries to create a Persistent Mining Turtle with [ComputerCraft](http://www.computercraft.info/wiki/Main_Page), a modification to create programmable entities (computers and turtles) for Minecraft™. Check the [post])(http://www.computercraft.info/forums2/index.php?/topic/29648-apmt-almost-persistent-mining-turtle) on CC Forum.
+This project tries to create a Persistent Mining Turtle with [ComputerCraft](http://www.computercraft.info/wiki/Main_Page), a modification to create programmable entities (computers and turtles) for Minecraft™. Check the [post](http://www.computercraft.info/forums2/index.php?/topic/29648-apmt-almost-persistent-mining-turtle) on CC Forum.
 
 ## Getting Started
 
