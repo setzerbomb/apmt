@@ -6,7 +6,7 @@ function Position()
   -- Global functions of the object / Funções Globais do objeto
 
   function self.addF()
-    if data.f <3 then
+    if data.f < 3 then
       data.f = data.f + 1
     else
       data.f = 0

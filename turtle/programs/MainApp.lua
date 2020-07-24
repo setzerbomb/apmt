@@ -1,5 +1,4 @@
 function MainApp(root)
-
   dofile(root .. "/objects/CommonFunctions.lua")
   dofile(root .. "/objects/MiningT.lua")
   dofile(root .. "/objects/Communicator.lua")
@@ -22,12 +21,13 @@ function MainApp(root)
   local execution = objects.execution
   local commonF = miningT.getCommonF()
   local guiMessages = GUIMessages()
-  local guiMain = GUIMain(commonF,guiMessages)
-  local continue,showMainMenu,showApps = true,true,true
+  local guiMain = GUIMain(commonF, guiMessages)
+  local continue, showMainMenu, showApps = true, true, true
   local turtleProcotol = nil
   local server = nil
 
-  local mainCase = commonF.switch{
+  local mainCase =
+    commonF.switch {
     [1] = function(x)
       Configuration(miningT)
     end,
@@ -37,42 +37,47 @@ function MainApp(root)
     [3] = function(x)
       continue = false
     end,
-    default = function (x) continue = false end
+    default = function(x)
+      continue = false
+    end
   }
 
-  local appsCase = commonF.switch{
+  local appsCase =
+    commonF.switch {
     [1] = function(x)
-      local stairs = Stairs(miningT,guiMessages)
+      local stairs = Stairs(miningT, guiMessages)
       stairs.start()
     end,
     [2] = function(x)
-      local tunnel = Tunnel(miningT,guiMessages)
+      local tunnel = Tunnel(miningT, guiMessages)
       tunnel.start()
     end,
     [3] = function(x)
-      local maintenance = Maintenance(miningT,guiMessages)
-      continue,showMainMenu = maintenance.start()
+      local maintenance = Maintenance(miningT, guiMessages)
+      continue, showMainMenu = maintenance.start()
     end,
     [4] = function(x)
-      local gtp = GoToPosition(miningT,guiMessages)
-      x,y,z = guiMain.goToXYZ()
-      if (x~=nil and y>4 and z~=nil) then
+      local gtp = GoToPosition(miningT, guiMessages)
+      x, y, z = guiMain.goToXYZ()
+      if (x ~= nil and y > 4 and z ~= nil) then
         miningT.down()
-        gtp.goTo(x,y,z)
+        gtp.goTo(x, y, z)
       end
     end,
     [5] = function(x)
-      local quarry = Quarry(miningT,guiMessages)
+      local quarry = Quarry(miningT, guiMessages)
       quarry.start()
     end,
     [6] = function(x)
-      local diamondQuarry = DiamondQuarry(miningT,guiMessages)
+      local diamondQuarry = DiamondQuarry(miningT, guiMessages)
       diamondQuarry.start()
     end,
     [7] = function(x)
       showApps = false
     end,
-    default = function (x) print("Invalid Option") end
+    default = function(x)
+      print("Invalid Option")
+    end
   }
 
   local function continueExecutionIf()
@@ -106,7 +111,7 @@ function MainApp(root)
   end
 
   local function stabilishFirstConnection(communicator)
-    for i = 1,5 do
+    for i = 1, 5 do
       local protocolData = communicator.protocolGenerator()
       if (protocolData[3]) then
         turtleProcotol = protocolData[1]
@@ -117,47 +122,47 @@ function MainApp(root)
     return false
   end
 
-  local function executeSlaveTask(task,master)
+  local function executeSlaveTask(task, master)
     if task.execution == "GoToPosition" then
       if next(task.params) ~= nil then
-        local gtp = GoToPosition(miningT,guiMessages)
-        local x,y,z = task.params[1],task.params[2],task.params[3]
-        if (tonumber(x)~=nil and tonumber(y)~=nil and tonumber(z)~=nil) then
-          if (y>4) then
+        local gtp = GoToPosition(miningT, guiMessages)
+        local x, y, z = task.params[1], task.params[2], task.params[3]
+        if (tonumber(x) ~= nil and tonumber(y) ~= nil and tonumber(z) ~= nil) then
+          if (y > 4) then
             miningT.down()
-            gtp.goTo(x,y,z)
+            gtp.goTo(x, y, z)
           end
           print("Finish Task")
-          Communicator().finishTask(objects.task.getData(),true,server,turtleProcotol)
+          Communicator().finishTask(objects.task.getData(), true, server, turtleProcotol)
           objects.task.reset()
         end
       end
-      --communicator.finishTask(task,false,server,turtleProcotol)
+    --communicator.finishTask(task,false,server,turtleProcotol)
     end
     if task.execution == "Stairs" then
-      local stairs = Stairs(miningT,guiMessages,master)
+      local stairs = Stairs(miningT, guiMessages, master)
       stairs.start()
     end
     if task.execution == "Tunnel" then
       if next(task.params) ~= nil then
-        local tunnel = Tunnel(miningT,guiMessages,master)
+        local tunnel = Tunnel(miningT, guiMessages, master)
         tunnel.start()
       end
-      --communicator.finishTask(task,false,server,turtleProcotol)
+    --communicator.finishTask(task,false,server,turtleProcotol)
     end
     if task.execution == "Quarry" then
       if next(task.params) ~= nil then
-        local quarry = Quarry(miningT,guiMessages,master)
+        local quarry = Quarry(miningT, guiMessages, master)
         quarry.start()
       end
-      --communicator.finishTask(task,false,server,turtleProcotol)
+    --communicator.finishTask(task,false,server,turtleProcotol)
     end
     if task.execution == "DiamondQuarry" then
       if next(task.params) ~= nil then
-        local diamondQuarry = DiamondQuarry(miningT,guiMessages,master)
+        local diamondQuarry = DiamondQuarry(miningT, guiMessages, master)
         diamondQuarry.start()
       end
-      --communicator.finishTask(task,false,server,turtleProcotol)
+    --communicator.finishTask(task,false,server,turtleProcotol)
     end
   end
 
@@ -165,14 +170,14 @@ function MainApp(root)
     local task = communicator.waitForTask(turtleProcotol)
     guiMessages.showInfoMsg(textutils.serialize(task))
     local times = 1
-    if (task.execution~=nil and task.execution ~= "") then
-      local master = {["task"] = task,["server"] = server,["protocol"] = turtleProcotol}
+    if (task.execution ~= nil and task.execution ~= "") then
+      local master = {["task"] = task, ["server"] = server, ["protocol"] = turtleProcotol}
       objects.task.set(master.task)
       miningT.saveAll()
-      executeSlaveTask(task,master)
+      executeSlaveTask(task, master)
     else
       guiMessages.showErrorMsg("Turtle couldn't find a task to execute")
-      print("Waiting" .. (3-times) .. " more times")
+      print("Waiting" .. (3 - times) .. " more times")
       if times > 3 then
         guiMessages.showInfoMsg("Disabling Ender and Slave Behavior")
         objects.turtleInfo.deactivateSlaveBehavior()
@@ -195,7 +200,7 @@ function MainApp(root)
   end
 
   function self.main()
-    local r = 0;
+    local r = 0
     if (objects.turtleInfo.isSlave()) then
       guiMessages.showInfoMsg("Type something to access the turtle configuration")
       r = commonF.limitToWrite(1)
@@ -208,10 +213,13 @@ function MainApp(root)
             if objects.task.getExecution() ~= nil and objects.task.getExecution() ~= "" then
               if (objects.task.isComplete() == true) then
                 print("Finish Task")
-                communicator.finishTask(objects.task.getData(),true,server,turtleProcotol)
+                communicator.finishTask(objects.task.getData(), true, server, turtleProcotol)
                 objects.task.reset()
               else
-                executeSlaveTask(objects.task.getData(), {["task"] = objects.task.getData(),["server"] = server,["protocol"] = turtleProcotol})
+                executeSlaveTask(
+                  objects.task.getData(),
+                  {["task"] = objects.task.getData(), ["server"] = server, ["protocol"] = turtleProcotol}
+                )
               end
             end
             guiMessages.showSuccessMsg("Success on stablishing connection with server")
@@ -226,9 +234,9 @@ function MainApp(root)
             end
           else
             guiMessages.showErrorMsg("Couldn't find a server, going back to home")
-            local x,y,z = objects.home.getX(),objects.home.getY(),objects.home.getZ()
-            local gtp = GoToPosition(miningT,guiMessages)
-            gtp.backTo(x,y,z)
+            local x, y, z = objects.home.getX(), objects.home.getY(), objects.home.getZ()
+            local gtp = GoToPosition(miningT, guiMessages)
+            gtp.backTo(x, y, z)
             objects.task.reset()
             Data.finalizeExecution()
             Data.previousPosIsHome()

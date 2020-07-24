@@ -20,15 +20,15 @@ function TurtleInfo()
   function self.setWorld(world)
     data.world = world
   end
-  
+
   function self.activateSlaveBehavior()
     data.isSlave = true
   end
-  
+
   function self.deactivateSlaveBehavior()
     data.isSlave = false
   end
-  
+
   function self.isSlave()
     return data.isSlave
   end

@@ -6,7 +6,8 @@ function Configuration(miningTurtle)
   local objects = dc.getObjects()
   local guiKP = GUIKeepData(commonF)
 
-  local dataCase = commonF.switch{
+  local dataCase =
+    commonF.switch {
     [1] = function(x)
       local localTable = guiKP.setPositionData(false)
       objects.position.setX(localTable.x)
@@ -36,7 +37,7 @@ function Configuration(miningTurtle)
       objects.previousPosition.setY(objects.position.getY())
       objects.previousPosition.setZ(objects.position.getZ())
       objects.previousPosition.setF(objects.position.getF())
-	    objects.task.reset()
+      objects.task.reset()
       guiKP.showSuccessMsg("Done")
     end,
     [4] = function(x)
@@ -44,7 +45,10 @@ function Configuration(miningTurtle)
       while (localTable == nil) do
         localTable = guiKP.setLightData(false)
         if (localTable.slot == objects.storages.getSlotIn() or localTable.slot == objects.storages.getSlotOut()) then
-          guiKP.showErrorMsg("Configuration conflict! Values must be different than EnderChest In/Out Slots: [" .. objects.storages.getSlotIn() .. "," .. objects.storages.getSlotOut() .. "]")
+          guiKP.showErrorMsg(
+            "Configuration conflict! Values must be different than EnderChest In/Out Slots: [" ..
+              objects.storages.getSlotIn() .. "," .. objects.storages.getSlotOut() .. "]"
+          )
           localTable = nil
         end
       end
@@ -56,11 +60,11 @@ function Configuration(miningTurtle)
     [5] = function(x)
       local localTable = guiKP.setTurtleInfo()
       objects.turtleInfo.setWorld(localTable.world)
-	    if (localTable.isSlave) then
-	      objects.turtleInfo.activateSlaveBehavior()
-	    else
-	      objects.turtleInfo.deactivateSlaveBehavior()
-	    end
+      if (localTable.isSlave) then
+        objects.turtleInfo.activateSlaveBehavior()
+      else
+        objects.turtleInfo.deactivateSlaveBehavior()
+      end
       guiKP.showSuccessMsg("Done")
     end,
     [6] = function(x)
@@ -68,7 +72,10 @@ function Configuration(miningTurtle)
       while (localTable == nil) do
         localTable = guiKP.setStorages(false)
         if (localTable.slotIn == objects.light.getSlot() or localTable.slotOut == objects.light.getSlot()) then
-          guiKP.showErrorMsg("Configuration conflict! Values must be different than Torch Light Slot: [" .. objects.light.getSlot() .. "]")
+          guiKP.showErrorMsg(
+            "Configuration conflict! Values must be different than Torch Light Slot: [" ..
+              objects.light.getSlot() .. "]"
+          )
           localTable = nil
         end
       end
@@ -81,9 +88,20 @@ function Configuration(miningTurtle)
       end
       guiKP.showSuccessMsg("Done")
     end,
-    [7] = function(x) dc.saveData(); continue = false; guiKP.showSuccessMsg("Saved"); if objects.turtleInfo.isSlave() then os.reboot(); end end,
-    [8] = function(x) continue = false end,
-    default = function (x) guiKP.showErrorMsg("Invalid option") end
+    [7] = function(x)
+      dc.saveData()
+      continue = false
+      guiKP.showSuccessMsg("Saved")
+      if objects.turtleInfo.isSlave() then
+        os.reboot()
+      end
+    end,
+    [8] = function(x)
+      continue = false
+    end,
+    default = function(x)
+      guiKP.showErrorMsg("Invalid option")
+    end
   }
 
   while continue do

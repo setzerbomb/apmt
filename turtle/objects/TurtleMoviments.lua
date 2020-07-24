@@ -1,5 +1,4 @@
 function TurtleMoviments(root)
-
   dofile(root .. "/controllers/DataController.lua")
   dofile(root .. "/controllers/FuelController.lua")
   dofile(root .. "/objects/TurtlePositionLookup.lua")
@@ -8,7 +7,7 @@ function TurtleMoviments(root)
   local self = {}
 
   local commonF = CommonFunctions()
-  local Data = DataController(commonF,root)
+  local Data = DataController(commonF, root)
   local FuelC
   local objects
 
@@ -17,11 +16,11 @@ function TurtleMoviments(root)
     objects = Data.getObjects()
   end
 
-  local function calculateDistance(x1,y1,z1,x2,y2,z2)
+  local function calculateDistance(x1, y1, z1, x2, y2, z2)
     distance = {}
-    distance.x = math.sqrt(math.pow((x2 - x1),2))
-    distance.y = math.sqrt(math.pow((y2 - y1),2))
-    distance.z = math.sqrt(math.pow((z2 - z1),2))
+    distance.x = math.sqrt(math.pow((x2 - x1), 2))
+    distance.y = math.sqrt(math.pow((y2 - y1), 2))
+    distance.z = math.sqrt(math.pow((z2 - z1), 2))
     return distance
   end
 
@@ -49,54 +48,88 @@ function TurtleMoviments(root)
     end
   end
 
-  local function move(moviment,changePositionData)
+  local function move(moviment, changePositionData)
     if not moviment() then
       if (not self.verifyFuel()) then
-	    if (objects.execution.getExecuting() ~= "Maintenance") then
-		  objects.execution.setTerminate(true)
-		end
-		return false
-	  end
+        if (objects.execution.getExecuting() ~= "Maintenance") then
+          objects.execution.setTerminate(true)
+        end
+        return false
+      end
     else
       changePositionData()
-    end		
+    end
   end
 
   function self.up()
-    move(turtle.up,function() objects.position.addY(); self.saveAll(); end)
+    move(
+      turtle.up,
+      function()
+        objects.position.addY()
+        self.saveAll()
+      end
+    )
   end
 
   function self.down()
-    move(turtle.down,function() objects.position.subY(); self.saveAll(); end)
+    move(
+      turtle.down,
+      function()
+        objects.position.subY()
+        self.saveAll()
+      end
+    )
   end
 
   function self.forward()
-    move(turtle.forward,self.adjustGPSWhenGoForward)
+    move(turtle.forward, self.adjustGPSWhenGoForward)
   end
 
   function self.back()
-    move(turtle.back,self.adjustGPSWhenGoBack)
+    move(turtle.back, self.adjustGPSWhenGoBack)
   end
 
   function self.adjustGPSWhenGoForward()
-    local gpsCase = commonF.switch{
-      [0] =function (x) objects.position.addZ() end,
-      [1] =function (x) objects.position.subX() end,
-      [2] =function (x) objects.position.subZ() end,
-      [3] =function (x) objects.position.addX() end,
-      default = function (x) return false end
+    local gpsCase =
+      commonF.switch {
+      [0] = function(x)
+        objects.position.addZ()
+      end,
+      [1] = function(x)
+        objects.position.subX()
+      end,
+      [2] = function(x)
+        objects.position.subZ()
+      end,
+      [3] = function(x)
+        objects.position.addX()
+      end,
+      default = function(x)
+        return false
+      end
     }
     gpsCase:case(objects.position.getF())
     self.saveAll()
   end
 
   function self.adjustGPSWhenGoBack()
-    local gpsCase = commonF.switch{
-      [0] =function (x) objects.position.subZ() end,
-      [1] =function (x) objects.position.addX() end,
-      [2] =function (x) objects.position.addZ() end,
-      [3] =function (x) objects.position.subX() end,
-      default = function (x) return false end
+    local gpsCase =
+      commonF.switch {
+      [0] = function(x)
+        objects.position.subZ()
+      end,
+      [1] = function(x)
+        objects.position.addX()
+      end,
+      [2] = function(x)
+        objects.position.addZ()
+      end,
+      [3] = function(x)
+        objects.position.subX()
+      end,
+      default = function(x)
+        return false
+      end
     }
     gpsCase:case(objects.position.getF())
     self.saveAll()
@@ -104,18 +137,18 @@ function TurtleMoviments(root)
 
   function self.verifyFuel()
     if FuelC.fuelLevel() <= 10 then
-	  if (not (objects.fuels.getRefuelTries() > 5)) then
+      if (not (objects.fuels.getRefuelTries() > 5)) then
         return FuelC.refuel()
-	  else
-	    return false
-	  end
+      else
+        return false
+      end
     else
       return true
     end
   end
-  
-  function self.doIHaveEnoughFuelToGo(x,y,z)
-    return self.getDistance(x,y,z)+1 <= turtle.getFuelLevel()	
+
+  function self.doIHaveEnoughFuelToGo(x, y, z)
+    return self.getDistance(x, y, z) + 1 <= turtle.getFuelLevel()
   end
 
   function self.forceRefuel()
@@ -127,7 +160,7 @@ function TurtleMoviments(root)
   end
 
   function self.verifyItens()
-    for i = 1,12 do
+    for i = 1, 12 do
       if turtle.getItemCount(i) == 0 then
         return true
       end
@@ -137,18 +170,26 @@ function TurtleMoviments(root)
   end
 
   function self.verifyFuelLevelToGoBackHome()
-    local distance = calculateDistance(objects.position.getX(),objects.position.getY(),objects.position.getZ(),objects.home.getX(),objects.home.getY(),objects.home.getZ())
+    local distance =
+      calculateDistance(
+      objects.position.getX(),
+      objects.position.getY(),
+      objects.position.getZ(),
+      objects.home.getX(),
+      objects.home.getY(),
+      objects.home.getZ()
+    )
     local dXYZ = distance.x + distance.y + distance.z
-	--print(distance.x .. "+" .. distance.y .. "+" .. distance.z .. "+30 = " ..dXYZ+30 .. " <= " .. turtle.getFuelLevel())
-    if turtle.getFuelLevel() <= (dXYZ+30) then
+    --print(distance.x .. "+" .. distance.y .. "+" .. distance.z .. "+30 = " ..dXYZ+30 .. " <= " .. turtle.getFuelLevel())
+    if turtle.getFuelLevel() <= (dXYZ + 30) then
       if not FuelC.refuel() then
         objects.execution.setTerminate(true)
       end
     end
   end
 
-  function self.getDistance(x2,y2,z2)
-    local d = calculateDistance(objects.position.getX(),objects.position.getY(),objects.position.getZ(),x2,y2,z2)
+  function self.getDistance(x2, y2, z2)
+    local d = calculateDistance(objects.position.getX(), objects.position.getY(), objects.position.getZ(), x2, y2, z2)
     return (d.x + d.y + d.z)
   end
 
@@ -185,7 +226,7 @@ function TurtleMoviments(root)
   local function start()
     loadAndFillDataObjects()
     FuelC = FuelController((Data.getObjects()).fuels)
-	Data.saveData()
+    Data.saveData()
   end
   start()
 

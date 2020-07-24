@@ -9,14 +9,14 @@ function GUIKeepData(commonFunctions)
   local function booleanInput(msg)
     print(msg)
     local resp = io.read()
-    if resp == "y" or resp =="Y" then
+    if resp == "y" or resp == "Y" then
       return true
     else
       return false
     end
   end
 
-  local function slotInputWithConditions(thing,slotMin,slotMax,hasAditionalCondition,givenCondition,forbiddenValue)
+  local function slotInputWithConditions(thing, slotMin, slotMax, hasAditionalCondition, givenCondition, forbiddenValue)
     local success = false
     local slotValue = 0
     local condition = givenCondition
@@ -24,7 +24,7 @@ function GUIKeepData(commonFunctions)
       condition = not hasAditionalCondition
     end
     while not success do
-      print("Let me know where the "..thing.." will stay ["..slotMin.."-"..slotMax.."]")
+      print("Let me know where the " .. thing .. " will stay [" .. slotMin .. "-" .. slotMax .. "]")
 
       slotValue = tonumber(io.read())
       if slotValue ~= nil then
@@ -32,9 +32,12 @@ function GUIKeepData(commonFunctions)
           success = true
         else
           if (hasAditionalCondition) then
-            self.showWarningMsg("Slot value must be between "..slotMin.." and "..slotMax.." and different than: [" .. forbiddenValue .. "]")
+            self.showWarningMsg(
+              "Slot value must be between " ..
+                slotMin .. " and " .. slotMax .. " and different than: [" .. forbiddenValue .. "]"
+            )
           else
-            self.showWarningMsg("Slot value must be between "..slotMin.." and "..slotMax)
+            self.showWarningMsg("Slot value must be between " .. slotMin .. " and " .. slotMax)
           end
         end
       end
@@ -46,17 +49,17 @@ function GUIKeepData(commonFunctions)
     print(message)
     return tonumber(io.read())
   end
-  
+
   local function stringInput(message)
     print(message)
-	return io.read()
+    return io.read()
   end
 
-  local function coordinatesInputVerifier(thing,axisList,coordinates)
-    for i,v in ipairs(axisList) do
-      coordinates[v] = numberInput("Type the "..v.." "..thing.." coordinate")
-      if (coordinates[v] ==nil) then
-        self.showWarningMsg("Warning: "..v.." must be number")
+  local function coordinatesInputVerifier(thing, axisList, coordinates)
+    for i, v in ipairs(axisList) do
+      coordinates[v] = numberInput("Type the " .. v .. " " .. thing .. " coordinate")
+      if (coordinates[v] == nil) then
+        self.showWarningMsg("Warning: " .. v .. " must be number")
         self.showWarningMsg("Restarting data input")
         return true
       end
@@ -64,12 +67,12 @@ function GUIKeepData(commonFunctions)
     return false
   end
 
-  local function positionInput(thing,axisList)
+  local function positionInput(thing, axisList)
     local errorFlag = true
     local position = {}
     while errorFlag do
       errorFlag = false
-      errorFlag = coordinatesInputVerifier(thing,axisList,position)
+      errorFlag = coordinatesInputVerifier(thing, axisList, position)
       if (errorFlag) then
         position = {}
       else
@@ -104,7 +107,7 @@ function GUIKeepData(commonFunctions)
     guiMessages.showHeader(msg)
   end
 
-  function self.getOrientation(turtlePositionLookup,miningTurtle)
+  function self.getOrientation(turtlePositionLookup, miningTurtle)
     local loc1 = turtlePositionLookup.main()
     local success, item = turtle.inspect()
     local result = -1
@@ -130,7 +133,7 @@ function GUIKeepData(commonFunctions)
     end
     if miningT.forward() then
       local loc2 = turtlePositionLookup.main()
-      local heading = {x = loc2.x -loc1.x, y = loc2.y - loc1.y, z = loc2.z - loc1.z}
+      local heading = {x = loc2.x - loc1.x, y = loc2.y - loc1.y, z = loc2.z - loc1.z}
       result = (heading.x + math.abs(heading.x) * 2) + (heading.z + math.abs(heading.z) * 3)
 
       if result >= 4 then
@@ -152,167 +155,175 @@ function GUIKeepData(commonFunctions)
 
   -- Interface to set the position data of the turtle / Interface para inserir os dados de posição da turtle
   function self.begin()
-    if turtle.getFuelLevel() <=0 then
+    if turtle.getFuelLevel() <= 0 then
       self.showInfoMsg("The Turtle will try to auto configure, to successful do, it'll needs some fuel")
-        self.showInfoMsg("Put some coal or a lava bucket in the next 10 seconds at the first slot")
-        self.showInfoMsg("Put a normal minecraft chest above the turtle and in one of each sides")
-        sleep(10)
-        turtle.select(1)
-        if not turtle.refuel() then
-          self.showWarningMsg("Starting manual configuration")
-        end
+      self.showInfoMsg("Put some coal or a lava bucket in the next 10 seconds at the first slot")
+      self.showInfoMsg("Put a normal minecraft chest above the turtle and in one of each sides")
+      sleep(10)
+      turtle.select(1)
+      if not turtle.refuel() then
+        self.showWarningMsg("Starting manual configuration")
       end
     end
-
-    function self.setPositionData(auto)
-      local turtlePositionLookup = TurtlePositionLookup()
-      local position = turtlePositionLookup.main()
-
-      if turtle.getFuelLevel() > 0 and position ~= nil and auto then
-        position.f = self.getOrientation(turtlePositionLookup)
-      else
-        self.showHeader("--------Position Device--------")
-        position = positionInput("device",{"x","y","z","f"})
-      end
-      return position
-    end
-
-    function self.setFuels(auto)
-      local fuels = {}
-      fuels.list={}
-      if auto then
-        fuels.list["minecraft:lava_bucket"] = 1000
-        fuels.list["minecraft:coal"] = 80
-        fuels.tries = 0
-      end
-      return fuels
-    end
-
-    function self.setStorages(auto)
-      local storages = {}
-      if auto then
-        storages.enabled = false
-        storages.slotIn = 13
-        storages.slotOut = 14
-      else
-        self.showHeader("--------Storages--------")
-        storages.slotIn = slotInputWithConditions("Input EnderStorage",12,16,false)
-        print("")
-        storages.slotOut = slotInputWithConditions("Output EnderStorage",12,16,true,storages.slotOut ~= storages.slotIn,storages.slotIn)
-        storages.enabled = booleanInput("Woul you like to enable the Ender Storages? [y/n]")
-      end
-      return storages
-    end
-
-    function self.setGhosts(auto)
-      local ghosts = {}
-      if auto then
-        ghosts.storageGhosts = {}
-        ghosts.storageGhosts["EnderStorage:enderChest"] = "EnderStorage:enderChest"
-        ghosts.storageGhosts["minecraft:chest"] = "minecraft:chest"
-        ghosts.lightGhosts = {}
-        ghosts.lightGhosts["minecraft:torch"] = "minecraft:torch"
-      end
-      return ghosts
-    end
-
-    -- Interface to set the data of current execution / Interface para configurar a execução atual
-    function self.setExecutionData()
-      local exec = {}
-      exec.executing = ""
-      exec.step = 0
-      exec.terminate = false
-      exec.specificData = nil
-      return exec
-    end
-
-    -- Interface to set escape data / Interface para configurar os dados de escape
-    function self.setTryToEscapeData()
-      local esc = {}
-      esc.escape = true
-      esc.tries = 0
-      return esc
-    end
-
-    function self.setLightData(auto)
-      local l = {}
-      if auto then
-        l.step = 0
-        l.slot = 15
-        l.enabled = true
-      else
-        self.showHeader("--------Light Configuration--------")
-        l.step = 0
-        storages.slotIn = slotInputWithConditions("Torch",12,16,false)
-        self.showInfoMsg("The Torch slot will be " .. l.slot)
-        l.enabled = booleanInput("Would you like to enable the torchs use? [y/n]")
-      end
-      return l
-    end
-
-    -- Just a interface / Somente uma interface
-    function self.setPreviousPosition(x,y,z,f)
-      local pPos = {}
-      self.showInfoMsg("Saving current position")
-      pPos.x = x
-      pPos.y = y
-      pPos.z = z
-      pPos.f = f
-      return pPos
-    end
-
-    function self.setTurtleInfo(auto)
-      local turtleI = {}
-      if auto then
-        turtleI.world = "minecraft"
-		turtleI.isSlave = false
-      else
-        while turtleI.world == nil do
-          self.showHeader("--------Aditional Configuration--------")	  
-          turtleI.world = stringInput("Type the world name")
-		  turtleI.isSlave = booleanInput("Do you want to change enable the slave behavior? [y,n]")
-        end
-      end
-      turtleI.id = os.getComputerID()
-      turtleI.name = os.getComputerLabel()
-      return turtleI
-    end
-
-    local function homeAutoSet(position)
-      local home = position
-      self.showInfoMsg("Considering the actual position as home")
-      home.isSet = true
-      return home
-    end
-
-    function self.homeManualSet()
-      self.showHeader("--------House Position--------")
-      local home = positionInput("device",{"x","y","z"})
-      return home
-    end
-    -- Interface to set the home data / Interface para inserir os dados da casa
-    function self.setHomeData(x,y,z,auto)
-      self.showInfoMsg("x="..x.." y="..y.." z="..z)
-      if (not auto) then
-        if booleanInput("Do you like to inform the house position now? [y/n]") then
-          return self.homeManualSet()
-        end
-      end
-      return homeAutoSet({["x"] = x,["y"] = y,["z"] = z})
-    end
-
-    function self.menu()
-      self.showHeader("------Turtle Configuration------")
-      print("1: Change device coordinates")
-      print("2: Chance house coordinates")
-      print("3: Clear all stored and current executions data and set goal position to home")
-      print("4: Customize torch use")
-      print("5: Change turtle information")
-      print("6: Active/Deactivate Ender Storage use")
-      print("7: Save and Exit")
-      print("8: Exit without save")
-      return io.read()
-    end
-
-    return self
   end
+
+  function self.setPositionData(auto)
+    local turtlePositionLookup = TurtlePositionLookup()
+    local position = turtlePositionLookup.main()
+
+    if turtle.getFuelLevel() > 0 and position ~= nil and auto then
+      position.f = self.getOrientation(turtlePositionLookup)
+    else
+      self.showHeader("--------Position Device--------")
+      position = positionInput("device", {"x", "y", "z", "f"})
+    end
+    return position
+  end
+
+  function self.setFuels(auto)
+    local fuels = {}
+    fuels.list = {}
+    if auto then
+      fuels.list["minecraft:lava_bucket"] = 1000
+      fuels.list["minecraft:coal"] = 80
+      fuels.tries = 0
+    end
+    return fuels
+  end
+
+  function self.setStorages(auto)
+    local storages = {}
+    if auto then
+      storages.enabled = false
+      storages.slotIn = 13
+      storages.slotOut = 14
+    else
+      self.showHeader("--------Storages--------")
+      storages.slotIn = slotInputWithConditions("Input EnderStorage", 12, 16, false)
+      print("")
+      storages.slotOut =
+        slotInputWithConditions(
+        "Output EnderStorage",
+        12,
+        16,
+        true,
+        storages.slotOut ~= storages.slotIn,
+        storages.slotIn
+      )
+      storages.enabled = booleanInput("Woul you like to enable the Ender Storages? [y/n]")
+    end
+    return storages
+  end
+
+  function self.setGhosts(auto)
+    local ghosts = {}
+    if auto then
+      ghosts.storageGhosts = {}
+      ghosts.storageGhosts["EnderStorage:enderChest"] = "EnderStorage:enderChest"
+      ghosts.storageGhosts["minecraft:chest"] = "minecraft:chest"
+      ghosts.lightGhosts = {}
+      ghosts.lightGhosts["minecraft:torch"] = "minecraft:torch"
+    end
+    return ghosts
+  end
+
+  -- Interface to set the data of current execution / Interface para configurar a execução atual
+  function self.setExecutionData()
+    local exec = {}
+    exec.executing = ""
+    exec.step = 0
+    exec.terminate = false
+    exec.specificData = nil
+    return exec
+  end
+
+  -- Interface to set escape data / Interface para configurar os dados de escape
+  function self.setTryToEscapeData()
+    local esc = {}
+    esc.escape = true
+    esc.tries = 0
+    return esc
+  end
+
+  function self.setLightData(auto)
+    local l = {}
+    if auto then
+      l.step = 0
+      l.slot = 15
+      l.enabled = true
+    else
+      self.showHeader("--------Light Configuration--------")
+      l.step = 0
+      l.slot = slotInputWithConditions("Torch", 12, 16, false)
+      self.showInfoMsg("The Torch slot will be " .. l.slot)
+      l.enabled = booleanInput("Would you like to enable the torchs use? [y/n]")
+    end
+    return l
+  end
+
+  -- Just a interface / Somente uma interface
+  function self.setPreviousPosition(x, y, z, f)
+    local pPos = {}
+    self.showInfoMsg("Saving current position")
+    pPos.x = x
+    pPos.y = y
+    pPos.z = z
+    pPos.f = f
+    return pPos
+  end
+
+  function self.setTurtleInfo(auto)
+    local turtleI = {}
+    if auto then
+      turtleI.world = "minecraft"
+      turtleI.isSlave = false
+    else
+      while turtleI.world == nil do
+        self.showHeader("--------Aditional Configuration--------")
+        turtleI.world = stringInput("Type the world name")
+        turtleI.isSlave = booleanInput("Do you want to change enable the slave behavior? [y,n]")
+      end
+    end
+    turtleI.id = os.getComputerID()
+    turtleI.name = os.getComputerLabel()
+    return turtleI
+  end
+
+  local function homeAutoSet(position)
+    local home = position
+    self.showInfoMsg("Considering the actual position as home")
+    home.isSet = true
+    return home
+  end
+
+  function self.homeManualSet()
+    self.showHeader("--------House Position--------")
+    local home = positionInput("device", {"x", "y", "z"})
+    return home
+  end
+  -- Interface to set the home data / Interface para inserir os dados da casa
+  function self.setHomeData(x, y, z, auto)
+    self.showInfoMsg("x=" .. x .. " y=" .. y .. " z=" .. z)
+    if (not auto) then
+      if booleanInput("Do you like to inform the house position now? [y/n]") then
+        return self.homeManualSet()
+      end
+    end
+    return homeAutoSet({["x"] = x, ["y"] = y, ["z"] = z})
+  end
+
+  function self.menu()
+    self.showHeader("------Turtle Configuration------")
+    print("1: Change device coordinates")
+    print("2: Chance house coordinates")
+    print("3: Clear all stored and current executions data and set goal position to home")
+    print("4: Customize torch use")
+    print("5: Change turtle information")
+    print("6: Active/Deactivate Ender Storage use")
+    print("7: Save and Exit")
+    print("8: Exit without save")
+    return io.read()
+  end
+
+  return self
+end

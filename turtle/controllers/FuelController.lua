@@ -16,17 +16,17 @@ function FuelController(fuels)
     return 0
   end
 
-  setmetatable(fuelsList,mt)
+  setmetatable(fuelsList, mt)
 
   fuels.setRefuelTries(0)
 
   -- Local functions of the object / Funções locais do objeto
-  local function fuelCalc(itemFuel,itemCount,fuelAmount)
+  local function fuelCalc(itemFuel, itemCount, fuelAmount)
     local needed = 0
     if (fuelAmount == nil) then
-      needed = math.floor((turtle.getFuelLimit() - turtle.getFuelLevel())/itemFuel)
+      needed = math.floor((turtle.getFuelLimit() - turtle.getFuelLevel()) / itemFuel)
     else
-      needed = fuelAmount/itemFuel
+      needed = fuelAmount / itemFuel
     end
     if needed > 0 then
       if needed > itemCount then
@@ -34,9 +34,9 @@ function FuelController(fuels)
       else
         turtle.refuel(needed)
       end
-      return true,true
+      return true, true
     end
-    return true,false
+    return true, false
   end
 
   -- Verifying if exists fuel in other slot / Verificando se existe combustível em outro espaço
@@ -45,16 +45,16 @@ function FuelController(fuels)
     local finished = false
     if turtle.getFuelLimit() - turtle.getFuelLevel() > 0 then
       guiMessages.showInfoMsg("Verifying fuel in all slots. [coal/lava]")
-      for i = 1,16 do
+      for i = 1, 16 do
         turtle.select(i)
         if turtle.refuel(0) then
           local data = turtle.getItemDetail(i)
           if data ~= nil then
-            success,finished = fuelCalc(fuelsList[data.name],data.count,fuelAmount)
+            success, finished = fuelCalc(fuelsList[data.name], data.count, fuelAmount)
             if (finished) then
               return true
             else
-              if (fuelAmount~=nil) then
+              if (fuelAmount ~= nil) then
                 if (fuelAmount < self.fuelLevel()) then
                   return true
                 end
@@ -73,7 +73,7 @@ function FuelController(fuels)
   function self.fuelLevel()
     return turtle.getFuelLevel()
   end
-  
+
   -- Refuel function / Função de reabastecimento
   function self.refuel(fuelAmount)
     if turtle.getFuelLevel() ~= "unlimited" then

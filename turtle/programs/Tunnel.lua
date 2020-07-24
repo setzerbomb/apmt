@@ -1,4 +1,4 @@
-function Tunnel(miningTurtle,guiCustomMessages,master)
+function Tunnel(miningTurtle, guiCustomMessages, master)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local miningT = miningTurtle
@@ -14,7 +14,7 @@ function Tunnel(miningTurtle,guiCustomMessages,master)
     specificLocalData = {}
     specificLocalData.limit = 0
     specificLocalData.step = 0
-    if master~=nil then
+    if master ~= nil then
       specificLocalData.limit = master.task.params[1]
     else
       while specificLocalData.limit <= 0 do
@@ -51,29 +51,66 @@ function Tunnel(miningTurtle,guiCustomMessages,master)
   end
   main()
 
-  local actionsCase = commonF.switch{
-    [0] = function(x) miningT.forward() end,
-    [1] = function(x) miningT.digUp() end,
-    [2] = function(x) miningT.digDown() end,
-    [3] = function(x) miningT.left() end,
-    [4] = function(x) miningT.forward() end,
-    [5] = function(x) miningT.digUp() end,
-    [6] = function(x) miningT.digDown() end,
-    [7] = function(x) miningT.right() end,
-    [8] = function(x) miningT.right() end,
-    [9] = function(x) miningT.forward() end,
-    [10] = function(x) miningT.forward() end,
-    [11] = function(x) miningT.digUp() end,
-    [12] = function(x) miningT.digDown() end,
-    [13] = function(x) miningT.left() end,
-    [14] = function(x) miningT.left() end,
-    [15] = function(x) miningT.forward() end,
-    [16] = function(x) miningT.right() end,
-    default = function (x) return 0 end
+  local actionsCase =
+    commonF.switch {
+    [0] = function(x)
+      miningT.forward()
+    end,
+    [1] = function(x)
+      miningT.digUp()
+    end,
+    [2] = function(x)
+      miningT.digDown()
+    end,
+    [3] = function(x)
+      miningT.left()
+    end,
+    [4] = function(x)
+      miningT.forward()
+    end,
+    [5] = function(x)
+      miningT.digUp()
+    end,
+    [6] = function(x)
+      miningT.digDown()
+    end,
+    [7] = function(x)
+      miningT.right()
+    end,
+    [8] = function(x)
+      miningT.right()
+    end,
+    [9] = function(x)
+      miningT.forward()
+    end,
+    [10] = function(x)
+      miningT.forward()
+    end,
+    [11] = function(x)
+      miningT.digUp()
+    end,
+    [12] = function(x)
+      miningT.digDown()
+    end,
+    [13] = function(x)
+      miningT.left()
+    end,
+    [14] = function(x)
+      miningT.left()
+    end,
+    [15] = function(x)
+      miningT.forward()
+    end,
+    [16] = function(x)
+      miningT.right()
+    end,
+    default = function(x)
+      return 0
+    end
   }
 
   local function patternAction()
-    while objects.execution.getStep() <=16 do
+    while objects.execution.getStep() <= 16 do
       actionsCase:case(objects.execution.getStep())
       objects.execution.addStep()
       miningT.saveAll()
@@ -87,14 +124,14 @@ function Tunnel(miningTurtle,guiCustomMessages,master)
       Data.storeCurrentPosition()
       Data.storeCurrentExecution()
       Data.saveData()
-	    local maintenance = Maintenance(miningT,guiMessages)
+      local maintenance = Maintenance(miningT, guiMessages)
       maintenance.start()
     else
       Data.finalizeExecution()
-	    objects.task.setStatus(true)
-	    objects.task.complete()
+      objects.task.setStatus(true)
+      objects.task.complete()
       Data.previousPosIsHome()
-      local maintenance = Maintenance(miningT,guiMessages)
+      local maintenance = Maintenance(miningT, guiMessages)
       maintenance.start()
     end
   end
@@ -102,11 +139,14 @@ function Tunnel(miningTurtle,guiCustomMessages,master)
   -- Global functions of the object / Funções Globais do objeto
 
   function self.start()
-    guiMessages.showInfoMsg("You can use torchs putting them on slot "..objects.light.getSlot()..", to customizations change the current config")
-    while specificData.step <= specificData.limit-1 and  not objects.execution.getTerminate() do
+    guiMessages.showInfoMsg(
+      "You can use torchs putting them on slot " ..
+        objects.light.getSlot() .. ", to customizations change the current config"
+    )
+    while specificData.step <= specificData.limit - 1 and not objects.execution.getTerminate() do
       miningT.verifyFuelLevelToGoBackHome()
       patternAction()
-      miningT.enlighten("left",4)
+      miningT.enlighten("left", 4)
       addStep()
     end
     wasTerminated(objects.execution.getTerminate())

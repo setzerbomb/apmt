@@ -28,7 +28,7 @@ function Storages()
   function self.disableEnder()
     data.enabled = false
   end
-  
+
   function self.isEnabled()
     return data.enabled
   end

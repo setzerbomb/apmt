@@ -6,8 +6,8 @@ function TableHandler()
 
   -- Verify if the file called exists / Verifica se o arquivo chamado existe
   function self.fileExists(name)
-    local f=fs.open(name,"r")
-    if f==nil then
+    local f = fs.open(name, "r")
+    if f == nil then
       return false
     else
       return true
@@ -15,8 +15,8 @@ function TableHandler()
   end
 
   -- Save the data of the table in a file / Salva os dados da tabela em um arquivo
-  function self.save(table,name)
-    local file = fs.open(name,"w")
+  function self.save(table, name)
+    local file = fs.open(name, "w")
     file.write(textutils.serialize(table))
     file.close()
   end
@@ -24,7 +24,7 @@ function TableHandler()
   -- Read the data of a file and try to put into a table / Lê os dados de um arquivo e tenta coloca-lo em uma tabela
   function self.load(name)
     if self.fileExists(name) then
-      local file = fs.open(name,"r")
+      local file = fs.open(name, "r")
       local data = file.readAll()
       file.close()
       return textutils.unserialize(data)

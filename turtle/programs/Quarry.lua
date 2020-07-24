@@ -1,4 +1,4 @@
-function Quarry(miningTurtle,guiCustomMessages,master)
+function Quarry(miningTurtle, guiCustomMessages, master)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local miningT = miningTurtle
@@ -8,7 +8,6 @@ function Quarry(miningTurtle,guiCustomMessages,master)
   local specificData
   local guiMessages = guiCustomMessages or GUIMessages()
 
-
   -- Private functions / Funções privadas
 
   local function specificDataInput()
@@ -17,18 +16,18 @@ function Quarry(miningTurtle,guiCustomMessages,master)
     specificLocalData.stepY = 0
     specificLocalData.y = 0
     specificLocalData.x = 0
-    if master~=nil then
+    if master ~= nil then
       specificLocalData.x = master.task.params[1]
       specificLocalData.y = master.task.params[2]
     else
-      while specificLocalData.y<=0 or specificLocalData.x<=0 do
+      while specificLocalData.y <= 0 or specificLocalData.x <= 0 do
         guiMessages.showHeader("Quarry")
         print("Tell me the quarry dimension x:y")
         print("X:")
         specificLocalData.x = tonumber(commonF.limitToWrite(15))
         print("Y:")
         specificLocalData.y = tonumber(commonF.limitToWrite(15))
-        if specificLocalData.y<=0 or specificLocalData.x<=0 then
+        if specificLocalData.y <= 0 or specificLocalData.x <= 0 then
           guiMessages.showWarningMsg("Informed value can't be zero or lower than zero")
         end
       end
@@ -65,9 +64,10 @@ function Quarry(miningTurtle,guiCustomMessages,master)
   end
   main()
 
-  local actionsCase = commonF.switch{
+  local actionsCase =
+    commonF.switch {
     [0] = function(x)
-      while specificData.stepX < specificData.x-1 and not objects.execution.getTerminate() do
+      while specificData.stepX < specificData.x - 1 and not objects.execution.getTerminate() do
         miningT.forward()
         addStepX()
       end
@@ -78,7 +78,7 @@ function Quarry(miningTurtle,guiCustomMessages,master)
     [1] = function(x)
       if (not objects.execution.getTerminate()) then
         if specificData.turn then
-          if specificData.stepY < specificData.y-1 then
+          if specificData.stepY < specificData.y - 1 then
             miningT.left()
             miningT.forward()
             miningT.left()
@@ -91,7 +91,7 @@ function Quarry(miningTurtle,guiCustomMessages,master)
           end
           specificData.turn = false
         else
-          if specificData.stepY < specificData.y-1 then
+          if specificData.stepY < specificData.y - 1 then
             miningT.right()
             miningT.forward()
             miningT.right()
@@ -115,11 +115,13 @@ function Quarry(miningTurtle,guiCustomMessages,master)
         end
       end
     end,
-    default = function (x) return 0 end
+    default = function(x)
+      return 0
+    end
   }
 
   local function patternAction()
-    while objects.execution.getStep() <=2 and not objects.execution.getTerminate()  do
+    while objects.execution.getStep() <= 2 and not objects.execution.getTerminate() do
       actionsCase:case(objects.execution.getStep())
       if (not objects.execution.getTerminate()) then
         objects.execution.addStep()
@@ -137,14 +139,14 @@ function Quarry(miningTurtle,guiCustomMessages,master)
       Data.storeCurrentPosition()
       Data.storeCurrentExecution()
       Data.saveData()
-	    local maintenance = Maintenance(miningT,guiMessages)
+      local maintenance = Maintenance(miningT, guiMessages)
       maintenance.start()
     else
       Data.finalizeExecution()
-	    objects.task.setStatus(true)
-	    objects.task.complete()
+      objects.task.setStatus(true)
+      objects.task.complete()
       Data.previousPosIsHome()
-      local maintenance = Maintenance(miningT,guiMessages)
+      local maintenance = Maintenance(miningT, guiMessages)
       maintenance.start()
     end
   end

@@ -1,4 +1,4 @@
-function GUIMain(commonFunctions,guiMessages)
+function GUIMain(commonFunctions, guiMessages)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local commonF = commonFunctions
@@ -26,9 +26,9 @@ function GUIMain(commonFunctions,guiMessages)
   end
 
   function self.goToXYZ()
-    local x,y,z
+    local x, y, z
     local errorFlag = false
-    while (x==nil or y==nil or z==nil) or errorFlag do
+    while (x == nil or y == nil or z == nil) or errorFlag do
       errorFlag = false
       guiMessages.showHeader("----------Coordinates----------")
       print("Type the X coordinate")
@@ -37,19 +37,19 @@ function GUIMain(commonFunctions,guiMessages)
       y = tonumber(commonF.limitToWrite(15))
       print("Type the Z coordinate")
       z = tonumber(commonF.limitToWrite(15))
-      if y == nil or z==nil or z == nil then
+      if y == nil or z == nil or z == nil then
         guiMessages.showWarningMsg("Warning: X,Y and Z must be numbers")
         errorFlag = true
       else
         if y ~= nil then
-          if y~=0 and y <= 4 then
+          if y ~= 0 and y <= 4 then
             guiMessages.showWarningMsg("Warning: Y must be higher than 4")
             errorFlag = true
           end
         end
       end
     end
-    return x,y,z
+    return x, y, z
   end
 
   return self

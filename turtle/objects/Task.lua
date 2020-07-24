@@ -1,5 +1,4 @@
 function Task()
-
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local data
@@ -47,20 +46,20 @@ function Task()
 
   function self.reset()
     data.complete = false
-	  data.execution = ""
-	  data.params = {}
-	  data.status = nil
-	  data.sent = false
-	  data.id = 0
+    data.execution = ""
+    data.params = {}
+    data.status = nil
+    data.sent = false
+    data.id = 0
   end
 
   function self.set(task)
     data.complete = task.complete
-	  data.execution = task.execution
-	  data.params = task.params
-	  data.status = task.status
-	  data.sent = task.sent
-	  data.id = task.id
+    data.execution = task.execution
+    data.params = task.params
+    data.status = task.status
+    data.sent = task.sent
+    data.id = task.id
   end
 
   return self

@@ -1,4 +1,4 @@
-function LoadPeripherals ()
+function LoadPeripherals()
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local wraped = {}
@@ -27,23 +27,22 @@ function LoadPeripherals ()
   local function start()
     --os.loadAPI("ocs/apis/sensor")
 
-    for k,v in ipairs(peripheral.getNames())do
-    wraped[k] = peripheral.wrap(v)
-    types[k] = {}
-    if peripheral.getType(v)=="sensor" then
-      types[k][1] = wraped[k].getSensorName()
-      types[k][2] = v
-    else
-      types[k][1] = peripheral.getType(v)
-      types[k][2] = v
-    end
+    for k, v in ipairs(peripheral.getNames()) do
+      wraped[k] = peripheral.wrap(v)
+      types[k] = {}
+      if peripheral.getType(v) == "sensor" then
+        types[k][1] = wraped[k].getSensorName()
+        types[k][2] = v
+      else
+        types[k][1] = peripheral.getType(v)
+        types[k][2] = v
+      end
     end
   end
 
-  self.openWirelessModem =  function(types)
-
+  self.openWirelessModem = function(types)
     local locateModemSide = function(types)
-      for k,v in ipairs(types) do
+      for k, v in ipairs(types) do
         if (v[1] == "modem") then
           return v[2]
         end

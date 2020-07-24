@@ -1,4 +1,4 @@
-function DiamondQuarry(miningTurtle,guiCustomMessages,master)
+function DiamondQuarry(miningTurtle, guiCustomMessages, master)
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local miningT = miningTurtle
@@ -17,18 +17,18 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,master)
     specificLocalData.stepY = 0
     specificLocalData.y = 0
     specificLocalData.x = 0
-    if master~=nil then
+    if master ~= nil then
       specificLocalData.x = master.task.params[1]
       specificLocalData.y = master.task.params[2]
     else
-      while specificLocalData.y<=0 or specificLocalData.x<=0 do
+      while specificLocalData.y <= 0 or specificLocalData.x <= 0 do
         guiMessages.showHeader("Diamond Quarry")
         print("Tell me the quarry dimension x:y")
         print("X:")
         specificLocalData.x = tonumber(commonF.limitToWrite(15))
         print("Y:")
         specificLocalData.y = tonumber(commonF.limitToWrite(15))
-        if specificLocalData.y<=0 or specificLocalData.x<=0 then
+        if specificLocalData.y <= 0 or specificLocalData.x <= 0 then
           guiMessages.showWarningMsg("Informed value can't be zero or lower than zero")
         end
       end
@@ -63,15 +63,16 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,master)
   end
   main()
 
-  local actionsCase = commonF.switch{
+  local actionsCase =
+    commonF.switch {
     [0] = function(x)
-      while specificData.stepX <= specificData.x-1 and not objects.execution.getTerminate() do
+      while specificData.stepX <= specificData.x - 1 and not objects.execution.getTerminate() do
         --guiMessages.debug("Step " .. objects.execution.getStep() .. " : ".. specificData.x .. " = x >= stepX = " .. specificData.stepX .. " , " .. specificData.y .. " = y >= " .. specificData.stepY)
         miningT.forward()
         miningT.digUp()
         miningT.digDown()
         addStepX()
-        miningT.enlighten("down",27)
+        miningT.enlighten("down", 27)
       end
       if not objects.execution.getTerminate() then
         specificData.stepX = 0
@@ -97,11 +98,13 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,master)
         addStepY()
       end
     end,
-    default = function (x) return 0 end
+    default = function(x)
+      return 0
+    end
   }
 
   local function patternAction()
-    while objects.execution.getStep() <=1 and not objects.execution.getTerminate() do
+    while objects.execution.getStep() <= 1 and not objects.execution.getTerminate() do
       actionsCase:case(objects.execution.getStep())
       if (not objects.execution.getTerminate()) then
         objects.execution.addStep()
@@ -119,14 +122,14 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,master)
       Data.storeCurrentPosition()
       Data.storeCurrentExecution()
       Data.saveData()
-	    local maintenance = Maintenance(miningT,guiMessages)
+      local maintenance = Maintenance(miningT, guiMessages)
       maintenance.start()
     else
       Data.finalizeExecution()
-	    objects.task.setStatus(true)
-	    objects.task.complete()
+      objects.task.setStatus(true)
+      objects.task.complete()
       Data.previousPosIsHome()
-      local maintenance = Maintenance(miningT,guiMessages)
+      local maintenance = Maintenance(miningT, guiMessages)
       maintenance.start()
     end
   end
@@ -134,11 +137,11 @@ function DiamondQuarry(miningTurtle,guiCustomMessages,master)
   -- Global functions of the object / Funções Globais do objeto
 
   function self.start()
-    while  not objects.execution.getTerminate() and specificData.stepY <= specificData.y do
+    while not objects.execution.getTerminate() and specificData.stepY <= specificData.y do
       while specificData.first do
         if objects.escape.getTries() > 0 then
-          specificData.first=false
-          for i = 1,5 do
+          specificData.first = false
+          for i = 1, 5 do
             miningT.up()
           end
         else

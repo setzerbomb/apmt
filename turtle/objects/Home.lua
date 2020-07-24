@@ -1,5 +1,4 @@
 function Home()
-
   -- Local variables of the object / Variáveis locais do objeto
   local self = {}
   local data

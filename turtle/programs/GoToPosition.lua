@@ -7,19 +7,19 @@ function GoToPosition(miningTurtle)
 
   -- Private functions / Funções privadas
 
-  local function selectAction(a,b,axis)
+  local function selectAction(a, b, axis)
     if a > b then
-      if axis=="x" then
+      if axis == "x" then
         return 1
       end
-      if axis=="z" then
+      if axis == "z" then
         return 2
       end
     else
-      if axis=="x" then
+      if axis == "x" then
         return 3
       end
-      if axis=="z" then
+      if axis == "z" then
         return 0
       end
     end
@@ -32,14 +32,14 @@ function GoToPosition(miningTurtle)
   end
 
   local function adjustX(x2)
-    adjustF(selectAction(position.getX(),x2,"x"))
+    adjustF(selectAction(position.getX(), x2, "x"))
     while position.getX() ~= x2 do
       miningT.forward()
     end
   end
 
   local function adjustZ(z2)
-    adjustF(selectAction(position.getZ(),z2,"z"))
+    adjustF(selectAction(position.getZ(), z2, "z"))
     while position.getZ() ~= z2 do
       miningT.forward()
     end
@@ -59,18 +59,18 @@ function GoToPosition(miningTurtle)
 
   -- Global functions of the object / Funções Globais do objeto
 
-  function self.backTo(x2,y2,z2)
-    if (miningT.doIHaveEnoughFuelToGo(x2,y2,z2)) then
+  function self.backTo(x2, y2, z2)
+    if (miningT.doIHaveEnoughFuelToGo(x2, y2, z2)) then
       adjustX(x2)
       adjustZ(z2)
       adjustY(y2)
     else
       guiMessages.showErrorMsg("I do not have fuel to do this task")
-      end
     end
+  end
 
-  function self.goTo(x2,y2,z2)
-    if (miningT.doIHaveEnoughFuelToGo(x2,y2,z2)) then
+  function self.goTo(x2, y2, z2)
+    if (miningT.doIHaveEnoughFuelToGo(x2, y2, z2)) then
       adjustY(y2)
       adjustZ(z2)
       adjustX(x2)
@@ -79,5 +79,5 @@ function GoToPosition(miningTurtle)
     end
   end
 
-      return self
-    end
+  return self
+end
