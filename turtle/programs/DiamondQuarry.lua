@@ -10,7 +10,7 @@ function DiamondQuarry(miningTurtle, guiCustomMessages, master)
   -- Private functions / Funções privadas
 
   local function specificDataInput()
-    specificLocalData = {}
+    local specificLocalData = {}
     specificLocalData.first = true
     specificLocalData.turn = false
     specificLocalData.stepX = 0
