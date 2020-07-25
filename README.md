@@ -24,6 +24,7 @@ The easy way, direct to your turtle. [Thanks to Bomb Bloke](http://www.computerc
 pastebin get cUYTGbpb bbpack
 bbpack mount https://github.com/setzerbomb/apmt/tree/master install
 cp install\turtle turtle
+cp install\gps gps
 mv turtle\startup startup
 reboot
 ```
