@@ -189,7 +189,6 @@ function TurtleMoviments(root)
   end
 
   function self.getDistance(x2, y2, z2)
-    print(x2 + " " + y2 + " " + z2)
     local d = calculateDistance(objects.position.getX(), objects.position.getY(), objects.position.getZ(), x2, y2, z2)
     return (d.x + d.y + d.z)
   end
